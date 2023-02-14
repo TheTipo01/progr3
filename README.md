@@ -79,4 +79,4 @@ dell’insegnamento, che saranno distribuite su tutto l’Anno Accademico. - Si 
 aver sostenuto la prova orale. - Come da regolamento d’esame il voto finale si ottiene come media del voto della prova
 orale e della discussione di laboratorio (i due voti hanno ugual peso nella media). - Il voto finale deve essere
 registrato entro fine settembre 2022, data oltre la quale non è possibile mantenere i voti parziali. Leggere il
-regolamento d’esame sulla pagina web delll’insegnamento per ulteriori dettagli.
+regolamento d’esame sulla pagina web dell’insegnamento per ulteriori dettagli.
