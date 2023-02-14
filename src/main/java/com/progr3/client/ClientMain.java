@@ -6,13 +6,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
-public class Client extends Application {
-    @Override
+
+public class ClientMain extends Application {
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Client.class.getResource("/client/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        URL clientUrl = ClientMain.class.getResource("/client/login.fxml");
+        FXMLLoader loader = new FXMLLoader(clientUrl);
+        Scene scene = new Scene(loader.load(), 900, 600);
+        stage.setTitle("Login");
         stage.setScene(scene);
         stage.show();
     }

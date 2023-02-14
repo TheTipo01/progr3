@@ -1,9 +1,6 @@
 package com.progr3.server;
 
-import com.progr3.entities.Account;
-import com.progr3.entities.Email;
-import com.progr3.entities.Packet;
-import com.progr3.entities.PacketType;
+import com.progr3.entities.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,10 +19,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server implements Runnable {
-    private Map<String, Manager> managers;
-    private List<ServerObserver> observers;
+    private final Map<String, Manager> managers;
+    private final List<ServerObserver> observers;
     private ServerSocket socket;
-    private ExecutorService pool;
+    private final ExecutorService pool;
 
     public Server(int port, List<ServerObserver> observers) {
         this.managers = new HashMap<>();
@@ -85,13 +82,16 @@ public class Server implements Runnable {
                     // if (manager != null && manager.getAccount().verifyPassword(account.getPassword()))
                 }
                 case Inbox -> {
-                    Account account = (Account) packet.getData();
-                    Manager manager = managers.get(account.getAddress());
+                    Inbox inbox = (Inbox) packet.getData();
+                    Manager manager = managers.get(inbox.getAccount().getAddress());
 
-                    List<Email> emails = manager.getInbox();
+                    List<Email> emails = null;
+                    if (manager != null) {
+                        emails = manager.getInbox();
+                    }
 
                     ObjectOutputStream output = new ObjectOutputStream(clientSocket.getOutputStream());
-                    output.writeObject(new Packet(PacketType.Inbox, emails));
+                    output.writeObject(new Packet(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
                 }
                 case Send -> {
                     Email email = (Email) packet.getData();

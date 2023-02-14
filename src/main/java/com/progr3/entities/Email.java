@@ -7,12 +7,12 @@ import java.util.UUID;
 
 public class Email implements Serializable {
     private final UUID id;
-    private final String sender;
     private final List<String> receivers;
-    private final String object;
     private final String text;
     private final Date timestamp;
     private final Email replyTo;
+    private final String object;
+    private final String sender;
 
     public Email(String sender, List<String> receivers, String object, String text, Email replyTo) {
         this.sender = sender;

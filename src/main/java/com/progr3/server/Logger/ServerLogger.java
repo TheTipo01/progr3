@@ -18,7 +18,7 @@ public class ServerLogger implements ServerObserver {
     private void log(String message, Level level) {
         Date date = new Date();
 
-        String logMessage = String.format("[%s] %s: %s", date, level.toString(), message);
+        String logMessage = String.format("[%s] %s: %s\n", date, level.toString(), message);
         textArea.appendText(logMessage);
     }
 
@@ -67,6 +67,6 @@ public class ServerLogger implements ServerObserver {
 
     @Override
     public void onError(Socket clientSocket, Throwable exception) {
-        log("Error occurred", Level.ERROR);
+        log(exception.getMessage(), Level.ERROR);
     }
 }
