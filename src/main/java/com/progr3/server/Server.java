@@ -12,6 +12,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,15 @@ public class Server implements Runnable {
     private final List<ServerObserver> observers;
     private ServerSocket socket;
     private final ExecutorService pool;
+
+    public void sendPacket(Socket clientSocket, Packet pkt) {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+            oos.writeObject(pkt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public Server(int port, List<ServerObserver> observers) {
         this.managers = new HashMap<>();
@@ -78,8 +88,8 @@ public class Server implements Runnable {
             switch (packet.getType()) {
                 case Login -> {
                     Account account = (Account) packet.getData();
-                    Manager manager = managers.get(account.getAddress());
-                    // if (manager != null && manager.getAccount().verifyPassword(account.getPassword()))
+
+                    sendPacket(clientSocket, new Packet(PacketType.Error, !managers.containsKey(account.getAddress())));
                 }
                 case Inbox -> {
                     Inbox inbox = (Inbox) packet.getData();
@@ -90,23 +100,43 @@ public class Server implements Runnable {
                         emails = manager.getInbox();
                     }
 
-                    ObjectOutputStream output = new ObjectOutputStream(clientSocket.getOutputStream());
-                    output.writeObject(new Packet(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
+                    sendPacket(clientSocket, new Packet(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
                 }
                 case Send -> {
                     Email email = (Email) packet.getData();
                     Manager manager = managers.get(email.getSender());
 
+                    if (email.getReceivers().size() == 0) {
+                        sendPacket(clientSocket, new Packet(PacketType.Error, true));
+                        return;
+                    }
+
                     manager.writeEmail(email);
 
-                    for (String address : email.getReceivers())
-                        managers.get(address).writeEmail(email);
+                    List<String> notSent = new ArrayList<>();
+                    for (String address : email.getReceivers()) {
+                        if (managers.containsKey(address)) {
+                            managers.get(address).writeEmail(email);
+                        } else {
+                            notSent.add(address);
+                        }
+                    }
+
+                    if (notSent.size() == 0) {
+                        sendPacket(clientSocket, new Packet(PacketType.Error, false));
+                    } else {
+                        if (notSent.size() != email.getReceivers().size()) {
+                            sendPacket(clientSocket, new Packet(PacketType.ErrorPartialSend, notSent));
+                        } else {
+                            sendPacket(clientSocket, new Packet(PacketType.Error, true));
+                        }
+                    }
                 }
                 case Delete -> {
                     Email email = (Email) packet.getData();
                     Manager manager = managers.get(email.getSender());
 
-                    manager.deleteEmail(email);
+                    sendPacket(clientSocket, new Packet(PacketType.Error, !manager.deleteEmail(email)));
                 }
             }
 

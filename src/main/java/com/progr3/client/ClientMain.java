@@ -10,10 +10,13 @@ import java.net.URL;
 
 
 public class ClientMain extends Application {
+    public static final int port = 42069;
+    public static final String host = "localhost";
+
     public void start(Stage stage) throws IOException {
         URL clientUrl = ClientMain.class.getResource("/client/login.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
-        Scene scene = new Scene(loader.load(), 900, 600);
+        Scene scene = new Scene(loader.load());
         stage.setTitle("Login");
         stage.setScene(scene);
         stage.show();

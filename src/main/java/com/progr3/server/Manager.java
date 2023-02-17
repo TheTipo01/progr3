@@ -58,14 +58,18 @@ public class Manager {
         }
     }
 
-    public void deleteEmail(Email email) throws IOException {
+    public boolean deleteEmail(Email email) {
+        boolean deleted = false;
+
         Lock write = lock.writeLock();
         if (email != null) {
             write.lock();
             File file = new File("./posta/" + account.getAddress() + "/" + email.getId().toString());
-            file.delete();
+            deleted = file.delete();
             write.unlock();
         }
+
+        return deleted;
     }
 
     public Account getAccount() {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progr3.client.WriteController">
+   <children>
+      <Label layoutX="42.0" layoutY="27.0" text="Da:" />
+      <TextField fx:id="from" disable="true" layoutX="64.0" layoutY="23.0" prefHeight="25.0" prefWidth="407.0" />
+      <TextField fx:id="to" layoutX="64.0" layoutY="57.0" prefHeight="25.0" prefWidth="407.0" promptText="nome@dominio.tld, nome2@dominio2.tld2..." />
+      <Label layoutX="49.0" layoutY="61.0" text="A:" />
+      <TextField fx:id="object" layoutX="64.0" layoutY="102.0" prefHeight="25.0" prefWidth="524.0" AnchorPane.rightAnchor="12.0" />
+      <Label layoutX="9.0" layoutY="106.0" text="Oggetto:" AnchorPane.leftAnchor="12.0" />
+      <TextArea fx:id="content" layoutX="10.0" layoutY="143.0" prefHeight="247.0" prefWidth="578.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
+      <Button fx:id="send" onAction="#onSendBtnClick" layoutX="515.0" layoutY="23.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Invia" />
+      <Button fx:id="close" onAction="#onCloseBtnClick" layoutX="515.0" layoutY="57.0" mnemonicParsing="false" text="Chiudi" />
+   </children>
+</AnchorPane>

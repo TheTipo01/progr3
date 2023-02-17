@@ -15,8 +15,7 @@ import java.util.ArrayList;
 public class ClientModel {
     public static Account account;
     ObservableList<Email> messages;
-    private final int port = 42069;
-    private final String host = "localhost";
+
 
     public ClientModel(TitledPane titledPane) {
         titledPane.textProperty().setValue("Hello, " + getCurrentEmail());
@@ -31,13 +30,10 @@ public class ClientModel {
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
 
-        selectedCells.addListener(new ListChangeListener() {
-            @Override
-            public void onChanged(Change c) {
-                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+        selectedCells.addListener((ListChangeListener) c -> {
+            TablePosition tablePosition = (TablePosition) selectedCells.get(0);
 
-                textArea.setText(messages.get(tablePosition.getRow()).getText());
-            }
+            textArea.setText(messages.get(tablePosition.getRow()).getText());
         });
     }
 
@@ -59,7 +55,7 @@ public class ClientModel {
 
     public void loadMessages() {
         try {
-            Socket socket = new Socket(host, port);
+            Socket socket = new Socket(ClientMain.host, ClientMain.port);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(new Packet(PacketType.Inbox, new Inbox(account, null)));

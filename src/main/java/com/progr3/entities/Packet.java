@@ -1,6 +1,7 @@
 package com.progr3.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Packet implements Serializable {
     private final PacketType type;
@@ -27,6 +28,16 @@ public class Packet implements Serializable {
             case Delete -> {
                 if (!(data instanceof Email)) {
                     throw new IllegalArgumentException("(Delete packet) Data must be an Email");
+                }
+            }
+            case Error -> {
+                if (!(data instanceof Boolean)) {
+                    throw new IllegalArgumentException("(Error packet) Data must be a Boolean");
+                }
+            }
+            case ErrorPartialSend -> {
+                if (!(data instanceof List && ((List<?>) data).get(0) instanceof String)) {
+                    throw new IllegalArgumentException("(Error packet) Data must be a Boolean");
                 }
             }
             default -> throw new IllegalArgumentException("(Packet) Invalid packet type");

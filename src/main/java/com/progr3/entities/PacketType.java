@@ -4,5 +4,7 @@ public enum PacketType {
     Login,
     Inbox,
     Send,
-    Delete
+    Delete,
+    Error,
+    ErrorPartialSend
 }
