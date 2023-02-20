@@ -15,13 +15,12 @@ public class WriteModel {
     public WriteModel() {
     }
 
-    public boolean sendMail(String to, String object, String content) throws IOException {
+    public Packet sendMail(String to, String object, String content) throws IOException {
         String[] addresses = to.split(",");
         for (int i = 0; i < addresses.length; i++) {
-            if (validateEmail(addresses[i])) {
-                addresses[i] = addresses[i].trim();
-            } else {
-                return false;
+            addresses[i] = addresses[i].trim();
+            if (!validateEmail(addresses[i])) {
+                return new Packet(PacketType.Error, true);
             }
         }
 
@@ -34,10 +33,10 @@ public class WriteModel {
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             Packet pkt = (Packet) in.readObject();
             clientSocket.close();
-            return (boolean) pkt.getData();
+            return pkt;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new Packet(PacketType.Error, true);
         }
     }
 

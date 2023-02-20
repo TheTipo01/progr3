@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="174.0" prefWidth="326.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progr3.client.PopupController">
+   <children>
+      <Label fx:id="content" layoutX="83.0" layoutY="72.0" text="Label" wrapText="true" />
+      <ImageView fx:id="image" fitHeight="50.0" fitWidth="50.0" layoutX="26.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="147.0" layoutY="135.0" mnemonicParsing="false" onAction="#onOkButtonPress" text="OK" />
+   </children>
+</AnchorPane>

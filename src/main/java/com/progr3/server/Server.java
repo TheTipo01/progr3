@@ -111,8 +111,6 @@ public class Server implements Runnable {
                         return;
                     }
 
-                    manager.writeEmail(email);
-
                     List<String> notSent = new ArrayList<>();
                     for (String address : email.getReceivers()) {
                         if (managers.containsKey(address)) {
@@ -123,9 +121,11 @@ public class Server implements Runnable {
                     }
 
                     if (notSent.size() == 0) {
+                        manager.writeEmail(email);
                         sendPacket(clientSocket, new Packet(PacketType.Error, false));
                     } else {
                         if (notSent.size() != email.getReceivers().size()) {
+                            manager.writeEmail(email);
                             sendPacket(clientSocket, new Packet(PacketType.ErrorPartialSend, notSent));
                         } else {
                             sendPacket(clientSocket, new Packet(PacketType.Error, true));

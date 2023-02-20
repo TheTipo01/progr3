@@ -1,5 +1,6 @@
 package com.progr3.client;
 
+import com.progr3.entities.Packet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -8,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class WriteController {
     public WriteModel model;
@@ -39,13 +41,33 @@ public class WriteController {
 
     @FXML
     public void onSendBtnClick(ActionEvent event) throws IOException {
-        if (model.sendMail(to.getText(), object.getText(), content.getText())) {
-            // handle success
-            ((Stage) from.getScene().getWindow()).close();
-        } else {
-            // handle failure
-            ((Stage) from.getScene().getWindow()).close();
+        Packet result = model.sendMail(to.getText(), object.getText(), content.getText());
+        switch (result.getType()) {
+            case Error -> {
+                boolean error = (boolean) result.getData();
+
+                if (error) {
+                    PopupController.showPopup("Errore", "Errore durante l'invio dell'email.", ImageType.Error);
+                } else {
+                    ((Stage) from.getScene().getWindow()).close();
+                    PopupController.showPopup("Successo", "Email inviata con successo.", ImageType.Success);
+                }
+            }
+            case ErrorPartialSend -> {
+                ArrayList<String> notSent = (ArrayList) result.getData();
+
+                ((Stage) from.getScene().getWindow()).close();
+
+                StringBuilder addresses = new StringBuilder();
+                for (String s : notSent) {
+                    addresses.append(s).append(", ");
+                }
+                addresses = new StringBuilder(addresses.substring(0, addresses.length() - 2));
+
+                PopupController.showPopup("Attenzione", "Email non inviata ai seguenti indirizzi:\n" + addresses, ImageType.Warning);
+            }
         }
+
     }
 
     @FXML
