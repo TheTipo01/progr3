@@ -8,6 +8,7 @@
    <children>
       <Label fx:id="content" layoutX="83.0" layoutY="72.0" text="Label" wrapText="true" />
       <ImageView fx:id="image" fitHeight="50.0" fitWidth="50.0" layoutX="26.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="147.0" layoutY="135.0" mnemonicParsing="false" onAction="#onOkButtonPress" text="OK" />
+      <Button layoutX="171.0" layoutY="135.0" mnemonicParsing="false" onAction="#onCloseButton" text="Chiudi" />
+      <Button fx:id="yes" layoutX="126.0" layoutY="135.0" mnemonicParsing="false" text="Si" visible="false" />
    </children>
 </AnchorPane>

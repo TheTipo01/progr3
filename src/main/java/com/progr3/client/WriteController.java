@@ -47,10 +47,10 @@ public class WriteController {
                 boolean error = (boolean) result.getData();
 
                 if (error) {
-                    PopupController.showPopup("Errore", "Errore durante l'invio dell'email.", ImageType.Error);
+                    PopupController.showPopup("Errore", "Errore durante l'invio dell'email.", ImageType.Error, null);
                 } else {
                     ((Stage) from.getScene().getWindow()).close();
-                    PopupController.showPopup("Successo", "Email inviata con successo.", ImageType.Success);
+                    PopupController.showPopup("Successo", "Email inviata con successo.", ImageType.Success, null);
                 }
             }
             case ErrorPartialSend -> {
@@ -64,7 +64,7 @@ public class WriteController {
                 }
                 addresses = new StringBuilder(addresses.substring(0, addresses.length() - 2));
 
-                PopupController.showPopup("Attenzione", "Email non inviata ai seguenti indirizzi:\n" + addresses, ImageType.Warning);
+                PopupController.showPopup("Attenzione", "Email non inviata ai seguenti indirizzi:\n" + addresses, ImageType.Warning, null);
             }
         }
 
@@ -72,6 +72,6 @@ public class WriteController {
 
     @FXML
     public void onCloseBtnClick(ActionEvent event) {
-
+        ((Stage) content.getScene().getWindow()).close();
     }
 }

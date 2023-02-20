@@ -1,6 +1,7 @@
 package com.progr3.server;
 
 import com.progr3.entities.*;
+import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -133,10 +134,11 @@ public class Server implements Runnable {
                     }
                 }
                 case Delete -> {
-                    Email email = (Email) packet.getData();
-                    Manager manager = managers.get(email.getSender());
+                    Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
 
-                    sendPacket(clientSocket, new Packet(PacketType.Error, !manager.deleteEmail(email)));
+                    Manager manager = managers.get(pair.getValue().getAddress());
+
+                    sendPacket(clientSocket, new Packet(PacketType.Error, !manager.deleteEmail(pair.getKey())));
                 }
             }
 

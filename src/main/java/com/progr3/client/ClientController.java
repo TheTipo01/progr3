@@ -40,4 +40,13 @@ public class ClientController {
         stage.setScene(scene);
         stage.show();
     }
+
+    public void onBtnDelete(ActionEvent event) throws IOException {
+        Email email = tableView.getSelectionModel().getSelectedItem();
+
+        PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
+            clientModel.deleteEmail(email, ClientModel.account);
+
+        });
+    }
 }

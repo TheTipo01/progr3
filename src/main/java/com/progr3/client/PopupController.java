@@ -1,9 +1,11 @@
 package com.progr3.client;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,6 +25,9 @@ public class PopupController {
     @FXML
     public ImageView image;
 
+    @FXML
+    public Button yes;
+
     public void setContent(String content) {
         this.content.setText(content);
     }
@@ -41,12 +46,20 @@ public class PopupController {
         }
     }
 
-    public void onOkButtonPress(ActionEvent event) {
+    public void setYes(EventHandler<ActionEvent> event) {
+        yes.setVisible(true);
+        yes.setOnAction((event1) -> {
+            event.handle(event1);
+            onCloseButton(event1);
+        });
+    }
+
+    public void onCloseButton(ActionEvent event) {
         ((Stage) content.getScene().getWindow()).close();
     }
 
     //TODO: maybe reworkare in MVC? idk se è interamente corretto? bruh
-    public static void showPopup(String title, String content, ImageType image) throws IOException {
+    public static void showPopup(String title, String content, ImageType image, EventHandler<ActionEvent> event) throws IOException {
         URL clientUrl = ClientMain.class.getResource("/client/popup.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
         Scene scene = new Scene(loader.load());
@@ -58,6 +71,9 @@ public class PopupController {
 
         controller.setContent(content);
         controller.setImage(image);
+        if (event != null) {
+            controller.setYes(event);
+        }
 
         stage.show();
     }

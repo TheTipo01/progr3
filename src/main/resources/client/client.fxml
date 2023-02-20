@@ -13,7 +13,8 @@
                         <TextArea fx:id="textArea" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
-            <Button onAction="#onBtnWrite" layoutX="632.0" layoutY="7.0" mnemonicParsing="false" text="Scrivi" />
+            <Button layoutX="632.0" layoutY="7.0" mnemonicParsing="false" onAction="#onBtnWrite" text="Scrivi" />
+            <Button layoutX="560.0" layoutY="7.0" mnemonicParsing="false" onAction="#onBtnDelete" text="Cancella" />
             </children>
         </AnchorPane>
     </content>

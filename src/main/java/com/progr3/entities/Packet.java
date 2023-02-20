@@ -1,5 +1,7 @@
 package com.progr3.entities;
 
+import javafx.util.Pair;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,8 +28,8 @@ public class Packet implements Serializable {
                 }
             }
             case Delete -> {
-                if (!(data instanceof Email)) {
-                    throw new IllegalArgumentException("(Delete packet) Data must be an Email");
+                if (!(data instanceof Pair && ((Pair<?, ?>) data).getKey() instanceof Email && ((Pair<?, ?>) data).getValue() instanceof Account)) {
+                    throw new IllegalArgumentException("(Delete packet) Data must be a pair of Email and Account");
                 }
             }
             case Error -> {

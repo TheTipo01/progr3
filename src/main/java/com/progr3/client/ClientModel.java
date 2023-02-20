@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import javafx.util.Pair;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -62,6 +63,9 @@ public class ClientModel {
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             Packet packet = (Packet) ois.readObject();
+
+            socket.close();
+
             Inbox inbox = (Inbox) packet.getData();
 
             if (packet.getType() == PacketType.Inbox) {
@@ -76,5 +80,24 @@ public class ClientModel {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public boolean deleteEmail(Email email, Account account) {
+        try {
+            Socket socket = new Socket(ClientMain.host, ClientMain.port);
+
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(new Packet(PacketType.Delete, new Pair<>(email, account)));
+
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            Packet packet = (Packet) ois.readObject();
+
+            socket.close();
+
+            return (boolean) packet.getData();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
