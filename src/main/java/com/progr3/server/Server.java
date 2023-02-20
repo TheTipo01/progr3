@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 
 public class Server implements Runnable {
     private final Map<String, Manager> managers;
-    private final Map<String, Socket> clients;
+    private final Map<String, ObjectOutputStream> clients;
     private final List<ServerObserver> observers;
     private ServerSocket socket;
     private final ExecutorService pool;
@@ -41,10 +41,7 @@ public class Server implements Runnable {
             for (String receiver : email.getReceivers()) {
                 if (clients.containsKey(receiver)) {
                     try {
-                        Socket socket = clients.get(receiver);
-                        sendPacket(socket, new Packet(PacketType.Send, email));
-                        socket.close();
-                        clients.remove(receiver);
+                        clients.get(receiver).writeObject(new Packet(PacketType.Send, email));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -166,12 +163,14 @@ public class Server implements Runnable {
                     Account account = (Account) packet.getData();
 
                     synchronized (clients) {
-                        clients.put(account.getAddress(), clientSocket);
+                        clients.put(account.getAddress(), new ObjectOutputStream(clientSocket.getOutputStream()));
                     }
                 }
             }
 
-            clientSocket.close();
+            if (packet.getType() != PacketType.Notify) {
+                clientSocket.close();
+            }
 
             for (ServerObserver o : observers)
                 o.onReceive(packet);

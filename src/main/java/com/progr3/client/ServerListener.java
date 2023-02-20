@@ -18,18 +18,18 @@ public class ServerListener extends Thread {
     @Override
     public void run() {
         try {
+            // TODO: chiudere il socket :)
+            Socket socket = new Socket(ClientMain.host, ClientMain.port);
+
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(new Packet(PacketType.Notify, ClientModel.account));
+
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             while (true) {
-                Socket socket = new Socket(ClientMain.host, ClientMain.port);
-
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(new Packet(PacketType.Notify, ClientModel.account));
-
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 Packet pkt = (Packet) ois.readObject();
                 if (pkt.getType() == PacketType.Send) {
                     model.addEmail((Email) pkt.getData());
                 }
-                socket.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
