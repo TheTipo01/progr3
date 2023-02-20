@@ -6,5 +6,6 @@ public enum PacketType {
     Send,
     Delete,
     Error,
-    ErrorPartialSend
+    ErrorPartialSend,
+    Notify
 }

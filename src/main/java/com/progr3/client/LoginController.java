@@ -38,7 +38,7 @@ public class LoginController {
 
             URL clientUrl = ClientMain.class.getResource("/client/client.fxml");
             FXMLLoader loader = new FXMLLoader(clientUrl);
-            Scene scene = new Scene(loader.load(), 900, 600);
+            Scene scene = new Scene(loader.load());
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.show();

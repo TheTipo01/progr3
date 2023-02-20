@@ -29,7 +29,7 @@ public class Packet implements Serializable {
             }
             case Delete -> {
                 if (!(data instanceof Pair && ((Pair<?, ?>) data).getKey() instanceof Email && ((Pair<?, ?>) data).getValue() instanceof Account)) {
-                    throw new IllegalArgumentException("(Delete packet) Data must be a pair of Email and Account");
+                    throw new IllegalArgumentException("(Delete packet) Data must be a Pair<Email, Account>");
                 }
             }
             case Error -> {
@@ -39,7 +39,12 @@ public class Packet implements Serializable {
             }
             case ErrorPartialSend -> {
                 if (!(data instanceof List && ((List<?>) data).get(0) instanceof String)) {
-                    throw new IllegalArgumentException("(Error packet) Data must be a Boolean");
+                    throw new IllegalArgumentException("(Partial Send packet) Data must be a List<String>");
+                }
+            }
+            case Notify -> {
+                if (!(data instanceof Account)) {
+                    throw new IllegalArgumentException("(Notify packet) Data must be an Account");
                 }
             }
             default -> throw new IllegalArgumentException("(Packet) Invalid packet type");

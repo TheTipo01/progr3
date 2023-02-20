@@ -17,9 +17,6 @@ import java.util.Objects;
 
 public class PopupController {
     @FXML
-    public Label title;
-
-    @FXML
     public Label content;
 
     @FXML
@@ -50,6 +47,7 @@ public class PopupController {
         yes.setVisible(true);
         yes.setOnAction((event1) -> {
             event.handle(event1);
+            // Called to close the popup
             onCloseButton(event1);
         });
     }
@@ -58,7 +56,7 @@ public class PopupController {
         ((Stage) content.getScene().getWindow()).close();
     }
 
-    //TODO: maybe reworkare in MVC? idk se è interamente corretto? bruh
+    // TODO: maybe reworkare in MVC? idk se è interamente corretto? bruh
     public static void showPopup(String title, String content, ImageType image, EventHandler<ActionEvent> event) throws IOException {
         URL clientUrl = ClientMain.class.getResource("/client/popup.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);

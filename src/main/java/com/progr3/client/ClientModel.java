@@ -1,6 +1,7 @@
 package com.progr3.client;
 
 import com.progr3.entities.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -8,53 +9,77 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class ClientModel {
     public static Account account;
-    ObservableList<Email> messages;
+    final ObservableList<Email> messages;
 
+    public ClientModel(TitledPane titledPane, TableView<Email> tableView, TextArea textArea) {
+        messages = FXCollections.observableArrayList(new ArrayList<>());
 
-    public ClientModel(TitledPane titledPane) {
-        titledPane.textProperty().setValue("Hello, " + getCurrentEmail());
+        viewMessagesStartup(tableView);
+        displayContent(tableView, textArea);
+
+        titledPane.textProperty().setValue("Ciao, " + getCurrentEmail() + " (" + getMessagesSize() + " messaggi)");
+
+        messages.addListener((ListChangeListener) c -> {
+            Platform.runLater(() -> {
+                titledPane.textProperty().setValue("Ciao, " + getCurrentEmail() + " (" + getMessagesSize() + " messaggi)");
+                try {
+                    PopupController.showPopup("Nuova mail", "Hai ricevuto una email!", ImageType.Success, null);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        });
     }
 
     private String getCurrentEmail() {
         return account.getAddress();
     }
 
-    public void displayContent(TableView tableView, TextArea textArea) {
+    private void displayContent(TableView<Email> tableView, TextArea textArea) {
         // Stolen from stack overflow
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
 
-        selectedCells.addListener((ListChangeListener) c -> {
-            TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+        synchronized (messages) {
+            selectedCells.addListener((ListChangeListener) c -> {
+                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
 
-            textArea.setText(messages.get(tablePosition.getRow()).getText());
-        });
-    }
-
-    public void viewMessagesStartup(TableView<Email> tv) {
-        messages = FXCollections.observableArrayList(new ArrayList<>());
-        loadMessages();
-
-        if (!messages.isEmpty()) {
-            TableColumn<Email, String> objectCol = new TableColumn<>("Object");
-            objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
-            TableColumn<Email, String> senderCol = new TableColumn<>("Sender");
-            senderCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getSender()));
-
-            tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tv.getColumns().addAll(objectCol, senderCol);
-            tv.setItems(messages);
+                textArea.setText(messages.get(tablePosition.getRow()).getText());
+            });
         }
     }
 
-    public void loadMessages() {
+    private void viewMessagesStartup(TableView<Email> tv) {
+        synchronized (messages) {
+            loadMessages();
+
+            if (!messages.isEmpty()) {
+                TableColumn<Email, String> objectCol = new TableColumn<>("Oggetto");
+                objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
+                TableColumn<Email, String> senderCol = new TableColumn<>("Mittente");
+                senderCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getSender()));
+                TableColumn<Email, String> dateCol = new TableColumn<>("Data");
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                dateCol.setCellValueFactory(p -> new SimpleStringProperty(sdf.format(p.getValue().getTimestamp())));
+
+                tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                tv.getColumns().addAll(objectCol, senderCol, dateCol);
+                tv.setItems(messages);
+            }
+        }
+    }
+
+    private void loadMessages() {
         try {
             Socket socket = new Socket(ClientMain.host, ClientMain.port);
 
@@ -82,6 +107,18 @@ public class ClientModel {
         this.account = account;
     }
 
+    public void addEmail(Email email) {
+        synchronized (messages) {
+            messages.add(email);
+        }
+    }
+
+    public int getMessagesSize() {
+        synchronized (messages) {
+            return messages.size();
+        }
+    }
+
     public boolean deleteEmail(Email email, Account account) {
         try {
             Socket socket = new Socket(ClientMain.host, ClientMain.port);
@@ -94,10 +131,15 @@ public class ClientModel {
 
             socket.close();
 
+            synchronized (messages) {
+                messages.remove(email);
+            }
+
             return (boolean) packet.getData();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
 }

@@ -27,9 +27,11 @@ public class ClientController {
 
     @FXML
     public void initialize() {
-        clientModel = new ClientModel(titledPane);
-        clientModel.viewMessagesStartup(tableView);
-        clientModel.displayContent(tableView, textArea);
+        clientModel = new ClientModel(titledPane, tableView, textArea);
+
+        // Start the thread to watch for new emails
+        ServerListener listener = new ServerListener(clientModel);
+        listener.start();
     }
 
     public void onBtnWrite(ActionEvent event) throws IOException {
