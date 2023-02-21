@@ -51,9 +51,11 @@ public class ClientModel {
 
         synchronized (messages) {
             selectedCells.addListener((ListChangeListener) c -> {
-                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                if (selectedCells.size() > 0) {
+                    TablePosition tablePosition = (TablePosition) selectedCells.get(0);
 
-                textArea.setText(messages.get(tablePosition.getRow()).getText());
+                    textArea.setText(messages.get(tablePosition.getRow()).getText());
+                }
             });
         }
     }
@@ -62,20 +64,22 @@ public class ClientModel {
         synchronized (messages) {
             loadMessages();
 
-            if (!messages.isEmpty()) {
-                TableColumn<Email, String> objectCol = new TableColumn<>("Oggetto");
-                objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
-                TableColumn<Email, String> senderCol = new TableColumn<>("Mittente");
-                senderCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getSender()));
-                TableColumn<Email, String> dateCol = new TableColumn<>("Data");
+            TableColumn<Email, String> objectCol = new TableColumn<>("Oggetto");
+            objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
+            TableColumn<Email, String> senderCol = new TableColumn<>("Mittente");
+            senderCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getSender()));
+            TableColumn<Email, String> dateCol = new TableColumn<>("Data");
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                dateCol.setCellValueFactory(p -> new SimpleStringProperty(sdf.format(p.getValue().getTimestamp())));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            dateCol.setCellValueFactory(p -> new SimpleStringProperty(sdf.format(p.getValue().getTimestamp())));
 
-                tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-                tv.getColumns().addAll(objectCol, senderCol, dateCol);
-                tv.setItems(messages);
-            }
+
+            tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            tv.getColumns().addAll(objectCol, senderCol, dateCol);
+            tv.setItems(messages);
+
+            dateCol.setSortType(TableColumn.SortType.DESCENDING);
+            tv.getSortOrder().add(dateCol);
         }
     }
 
@@ -150,8 +154,6 @@ public class ClientModel {
         }
 
         if (difference > 0 && (difference - notifyController.getSentMail()) > 0) {
-            notifyController.setSentMail(0);
-
             Platform.runLater(() -> {
                 try {
                     PopupController.showPopup("Nuova mail", "Hai ricevuto una email!", ImageType.Success, null);
@@ -160,5 +162,11 @@ public class ClientModel {
                 }
             });
         }
+
+        notifyController.setSentMail(0);
+    }
+
+    public void replyTo(Email email) {
+
     }
 }

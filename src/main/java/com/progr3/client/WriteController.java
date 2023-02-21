@@ -1,5 +1,6 @@
 package com.progr3.client;
 
+import com.progr3.entities.Email;
 import com.progr3.entities.Packet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WriteController {
     private WriteModel model;
@@ -41,6 +43,8 @@ public class WriteController {
 
     @FXML
     public void onSendBtnClick(ActionEvent event) throws IOException {
+        to.setDisable(false);
+        object.setDisable(false);
         Packet result = model.sendMail(to.getText(), object.getText(), content.getText());
         switch (result.getType()) {
             case Error -> {
@@ -77,5 +81,35 @@ public class WriteController {
 
     public void setNotify(NotifyController notifyController) {
         model.setNotifyController(notifyController);
+    }
+
+    private void setParams(Email email) {
+        to.setDisable(true);
+        object.setText("Re: " + email.getObject());
+        object.setDisable(true);
+        content.setText("\n\n\n\n\n[" + email.getTimestamp() + "] " + email.getSender() + " ha inviato:\n" + email.getText());
+    }
+
+    public void setParamsReply(Email email) {
+        setParams(email);
+        to.setText(email.getSender());
+    }
+
+    public void setParamsReplyAll(Email email) {
+        setParams(email);
+        List<String> receivers = new ArrayList<>(email.getReceivers());
+        receivers.remove(ClientModel.account.getAddress());
+
+        to.setText(email.getSender() + ", " + String.join(", ", receivers));
+    }
+
+    public void setParamsForward(Email email) {
+        to.setDisable(false);
+        object.setText("Fwd: " + email.getObject());
+        object.setDisable(true);
+        content.setText("\n\n---- Messaggio Inoltrato ----\nOggetto: " + email.getObject() +
+                "\nData: " + email.getTimestamp() +
+                "\nMittente: " + email.getSender() +
+                "\n\n\n" + email.getText());
     }
 }

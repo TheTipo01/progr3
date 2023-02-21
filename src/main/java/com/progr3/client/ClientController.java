@@ -56,4 +56,52 @@ public class ClientController {
             clientModel.deleteEmail(email, ClientModel.account);
         });
     }
+
+    public void onBtnReply(ActionEvent event) throws IOException {
+        Email email = tableView.getSelectionModel().getSelectedItem();
+
+        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
+        FXMLLoader loader = new FXMLLoader(clientUrl);
+        Scene scene = new Scene(loader.load());
+
+        WriteController writeController = loader.getController();
+        writeController.setNotify(notifyController);
+        writeController.setParamsReply(email);
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void onBtnReplyAll(ActionEvent event) throws IOException {
+        Email email = tableView.getSelectionModel().getSelectedItem();
+
+        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
+        FXMLLoader loader = new FXMLLoader(clientUrl);
+        Scene scene = new Scene(loader.load());
+
+        WriteController writeController = loader.getController();
+        writeController.setNotify(notifyController);
+        writeController.setParamsReplyAll(email);
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void onBtnForward(ActionEvent event) throws IOException {
+        Email email = tableView.getSelectionModel().getSelectedItem();
+
+        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
+        FXMLLoader loader = new FXMLLoader(clientUrl);
+        Scene scene = new Scene(loader.load());
+
+        WriteController writeController = loader.getController();
+        writeController.setNotify(notifyController);
+        writeController.setParamsForward(email);
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+    }
 }

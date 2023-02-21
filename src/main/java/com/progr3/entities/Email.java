@@ -10,18 +10,16 @@ public class Email implements Serializable {
     private final List<String> receivers;
     private final String text;
     private final Date timestamp;
-    private final Email replyTo;
     private final String object;
     private final String sender;
 
-    public Email(String sender, List<String> receivers, String object, String text, Email replyTo) {
+    public Email(String sender, List<String> receivers, String object, String text) {
         this.sender = sender;
         this.receivers = receivers;
         this.object = object;
         this.text = text;
         this.timestamp = new Date();
         this.id = UUID.randomUUID();
-        this.replyTo = replyTo;
     }
 
     public UUID getId() {
@@ -46,10 +44,6 @@ public class Email implements Serializable {
 
     public Date getTimestamp() {
         return timestamp;
-    }
-
-    public Email getReplyTo() {
-        return replyTo;
     }
 
     @Override

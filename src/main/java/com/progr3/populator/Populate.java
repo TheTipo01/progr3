@@ -12,6 +12,7 @@ public class Populate {
     public static void main(String[] args) throws Exception {
         createAddress("manuel.raimo@edu.unito.it");
         createAddress("alessia.pirri@edu.unito.it");
+        createAddress("simone.romeo@edu.unito.it");
     }
 
     public static void createAddress(String address) throws Exception {
@@ -23,7 +24,7 @@ public class Populate {
         List<String> receivers = new ArrayList<>();
         receivers.add(account.getAddress());
 
-        Email email = new Email("qqSD7xKfSmjk0wK67ep@yhtwtombr.marchildren.in.net", receivers, "HAI IL LIDL 500€", "Sei stato selezionato questa settimana come vincitore!", null);
+        Email email = new Email("qqSD7xKfSmjk0wK67ep@yhtwtombr.marchildren.in.net", receivers, "HAI IL LIDL 500€", "Sei stato selezionato questa settimana come vincitore!");
         oos = new ObjectOutputStream(new FileOutputStream("./posta/" + account.getAddress() + "/" + email.getId().toString()));
         oos.writeObject(email);
     }

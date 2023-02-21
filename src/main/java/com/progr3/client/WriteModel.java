@@ -31,7 +31,7 @@ public class WriteModel {
             Socket clientSocket = new Socket(ClientMain.host, ClientMain.port);
 
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-            out.writeObject(new Packet(PacketType.Send, new Email(ClientModel.account.getAddress(), Arrays.stream(addresses).toList(), object, content, null)));
+            out.writeObject(new Packet(PacketType.Send, new Email(ClientModel.account.getAddress(), Arrays.stream(addresses).toList(), object, content)));
 
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             Packet pkt = (Packet) in.readObject();
