@@ -11,16 +11,16 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 public class LoginController {
-    public LoginModel model;
+    private LoginModel model;
 
     @FXML
-    public TextField email;
+    private TextField email;
 
     @FXML
-    public TextField password;
+    private TextField password;
 
     @FXML
-    public Label errorLabel;
+    private Label errorLabel;
 
     @FXML
     public void initialize() {
@@ -41,6 +41,7 @@ public class LoginController {
             Scene scene = new Scene(loader.load());
             Stage stage = new Stage();
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.show();
 
             ((Stage) email.getScene().getWindow()).close();

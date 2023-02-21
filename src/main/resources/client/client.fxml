@@ -20,7 +20,9 @@
                      </children></AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>
-                        <TextArea fx:id="textArea" layoutX="6.0" prefHeight="183.0" prefWidth="792.0" />
+                        <TextArea fx:id="textArea" layoutX="3.0" layoutY="37.0" prefHeight="140.0" prefWidth="792.0" />
+                        <Label layoutX="5.0" layoutY="10.0" text="Destinatari:" />
+                        <TextField fx:id="receivers" editable="false" layoutX="68.0" layoutY="6.0" prefHeight="25.0" prefWidth="725.0" />
                      </children></AnchorPane>
               </items>
             </SplitPane>

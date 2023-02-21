@@ -2,85 +2,29 @@ package com.progr3.client;
 
 import com.progr3.entities.*;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.TableView;
 import javafx.util.Pair;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientModel {
     public static Account account;
-    final ObservableList<Email> messages;
-    private Integer sentMail;
+    private final ObservableList<Email> messages;
     private final NotifyController notifyController;
 
-    public ClientModel(TitledPane titledPane, TableView<Email> tableView, TextArea textArea, NotifyController notifyController) {
+    public ClientModel(NotifyController notifyController) {
         messages = FXCollections.observableArrayList(new ArrayList<>());
-        sentMail = 0;
         this.notifyController = notifyController;
 
-        viewMessagesStartup(tableView);
-        displayContent(tableView, textArea);
-
-        titledPane.textProperty().setValue("Ciao, " + getCurrentEmail() + " (" + getMessagesSize() + " messaggi)");
-
-        messages.addListener((ListChangeListener) c -> {
-            Platform.runLater(() -> {
-                titledPane.textProperty().setValue("Ciao, " + getCurrentEmail() + " (" + getMessagesSize() + " messaggi)");
-            });
-        });
-    }
-
-    private String getCurrentEmail() {
-        return account.getAddress();
-    }
-
-    private void displayContent(TableView<Email> tableView, TextArea textArea) {
-        // Stolen from stack overflow
-        tableView.getSelectionModel().setCellSelectionEnabled(true);
-        ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
-
-        synchronized (messages) {
-            selectedCells.addListener((ListChangeListener) c -> {
-                if (selectedCells.size() > 0) {
-                    TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-
-                    textArea.setText(messages.get(tablePosition.getRow()).getText());
-                }
-            });
-        }
-    }
-
-    private void viewMessagesStartup(TableView<Email> tv) {
-        synchronized (messages) {
-            loadMessages();
-
-            TableColumn<Email, String> objectCol = new TableColumn<>("Oggetto");
-            objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
-            TableColumn<Email, String> senderCol = new TableColumn<>("Mittente");
-            senderCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getSender()));
-            TableColumn<Email, String> dateCol = new TableColumn<>("Data");
-
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            dateCol.setCellValueFactory(p -> new SimpleStringProperty(sdf.format(p.getValue().getTimestamp())));
-
-
-            tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tv.getColumns().addAll(objectCol, senderCol, dateCol);
-            tv.setItems(messages);
-
-            dateCol.setSortType(TableColumn.SortType.DESCENDING);
-            tv.getSortOrder().add(dateCol);
-        }
+        loadMessages();
     }
 
     private void loadMessages() {
@@ -104,7 +48,14 @@ public class ClientModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void addListenerMessages(ListChangeListener<Email> listener) {
+        messages.addListener(listener);
+    }
+
+    public String getCurrentEmail() {
+        return account.getAddress();
     }
 
     public void setAccount(Account account) {
@@ -114,6 +65,12 @@ public class ClientModel {
     public void addEmail(Email email) {
         synchronized (messages) {
             messages.add(email);
+        }
+    }
+
+    public Email getMessage(int index) {
+        synchronized (messages) {
+            return messages.get(index);
         }
     }
 
@@ -144,6 +101,10 @@ public class ClientModel {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void bindTableView(TableView<Email> tableView) {
+        tableView.setItems(messages);
     }
 
     public void setMessages(List<Email> emails) {

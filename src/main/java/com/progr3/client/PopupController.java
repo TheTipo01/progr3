@@ -17,13 +17,13 @@ import java.util.Objects;
 
 public class PopupController {
     @FXML
-    public Label content;
+    private Label content;
 
     @FXML
-    public ImageView image;
+    private ImageView image;
 
     @FXML
-    public Button yes;
+    private Button yes;
 
     public void setContent(String content) {
         this.content.setText(content);
@@ -64,6 +64,7 @@ public class PopupController {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle(title);
+        stage.setResizable(false);
 
         PopupController controller = loader.getController();
 

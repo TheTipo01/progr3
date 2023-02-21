@@ -20,6 +20,7 @@ public class ClientMain extends Application {
         Scene scene = new Scene(loader.load());
         stage.setTitle("Login");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 

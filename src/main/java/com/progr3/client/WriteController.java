@@ -17,22 +17,22 @@ public class WriteController {
     private WriteModel model;
 
     @FXML
-    public TextField from;
+    private TextField from;
 
     @FXML
-    public TextField to;
+    private TextField to;
 
     @FXML
-    public TextField object;
+    private TextField object;
 
     @FXML
-    public TextArea content;
+    private TextArea content;
 
     @FXML
-    public Button send;
+    private Button send;
 
     @FXML
-    public Button close;
+    private Button close;
 
     @FXML
     public void initialize() {
