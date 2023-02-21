@@ -2,6 +2,7 @@ package com.progr3.client;
 
 import com.progr3.entities.Email;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ClientController {
     @FXML
@@ -65,13 +67,25 @@ public class ClientController {
     public void initializeTableView() {
         TableColumn<Email, String> objectCol = new TableColumn<>("Oggetto");
         objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
+
         TableColumn<Email, String> senderCol = new TableColumn<>("Mittente");
         senderCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getSender()));
-        TableColumn<Email, String> dateCol = new TableColumn<>("Data");
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        dateCol.setCellValueFactory(p -> new SimpleStringProperty(sdf.format(p.getValue().getTimestamp())));
+        TableColumn<Email, Date> dateCol = new TableColumn<>("Data");
+        dateCol.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTimestamp()));
+        dateCol.setCellFactory(column -> new TableCell<>() {
+            private final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
+            @Override
+            protected void updateItem(Date item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(format.format(item));
+                }
+            }
+        });
 
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.getColumns().addAll(objectCol, senderCol, dateCol);
