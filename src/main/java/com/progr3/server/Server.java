@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 
 public class Server implements Runnable {
     private final Map<String, Manager> managers;
-    private final Map<String, ObjectOutputStream> clients;
     private final List<ServerObserver> observers;
     private ServerSocket socket;
     private final ExecutorService pool;
@@ -36,23 +35,8 @@ public class Server implements Runnable {
         }
     }
 
-    public void notifyClients(Email email) {
-        synchronized (clients) {
-            for (String receiver : email.getReceivers()) {
-                if (clients.containsKey(receiver)) {
-                    try {
-                        clients.get(receiver).writeObject(new Packet(PacketType.Send, email));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
     public Server(int port, List<ServerObserver> observers) {
         this.managers = new HashMap<>();
-        this.clients = new HashMap<>();
         this.observers = observers;
 
         // Initializing Socket with exception handling
@@ -140,12 +124,10 @@ public class Server implements Runnable {
 
                     if (notSent.size() == 0) {
                         manager.writeEmail(email);
-                        notifyClients(email);
                         sendPacket(clientSocket, new Packet(PacketType.Error, false));
                     } else {
                         if (notSent.size() != email.getReceivers().size()) {
                             manager.writeEmail(email);
-                            notifyClients(email);
                             sendPacket(clientSocket, new Packet(PacketType.ErrorPartialSend, notSent));
                         } else {
                             sendPacket(clientSocket, new Packet(PacketType.Error, true));
@@ -159,17 +141,6 @@ public class Server implements Runnable {
 
                     sendPacket(clientSocket, new Packet(PacketType.Error, !manager.deleteEmail(pair.getKey())));
                 }
-                case Notify -> {
-                    Account account = (Account) packet.getData();
-
-                    synchronized (clients) {
-                        clients.put(account.getAddress(), new ObjectOutputStream(clientSocket.getOutputStream()));
-                    }
-                }
-            }
-
-            if (packet.getType() != PacketType.Notify) {
-                clientSocket.close();
             }
 
             for (ServerObserver o : observers)

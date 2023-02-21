@@ -12,7 +12,10 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class WriteModel {
-    public WriteModel() {
+    private NotifyController notifyController;
+
+    public void setNotifyController(NotifyController notifyController) {
+        this.notifyController = notifyController;
     }
 
     public Packet sendMail(String to, String object, String content) throws IOException {
@@ -32,7 +35,11 @@ public class WriteModel {
 
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             Packet pkt = (Packet) in.readObject();
+
             clientSocket.close();
+
+            notifyController.incrementSetMail();
+
             return pkt;
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class WriteController {
-    public WriteModel model;
+    private WriteModel model;
 
     @FXML
     public TextField from;
@@ -73,5 +73,9 @@ public class WriteController {
     @FXML
     public void onCloseBtnClick(ActionEvent event) {
         ((Stage) content.getScene().getWindow()).close();
+    }
+
+    public void setNotify(NotifyController notifyController) {
+        model.setNotifyController(notifyController);
     }
 }

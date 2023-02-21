@@ -23,11 +23,15 @@ public class ClientController {
     @FXML
     protected TextArea textArea;
 
-    public static ClientModel clientModel;
+    private ClientModel clientModel;
+
+    private NotifyController notifyController;
 
     @FXML
     public void initialize() {
-        clientModel = new ClientModel(titledPane, tableView, textArea);
+        notifyController = new NotifyController();
+
+        clientModel = new ClientModel(titledPane, tableView, textArea, notifyController);
 
         // Start the thread to watch for new emails
         ServerListener listener = new ServerListener(clientModel);
@@ -38,6 +42,8 @@ public class ClientController {
         URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
         Scene scene = new Scene(loader.load());
+        WriteController writeController = loader.getController();
+        writeController.setNotify(notifyController);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.show();
@@ -48,7 +54,6 @@ public class ClientController {
 
         PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
             clientModel.deleteEmail(email, ClientModel.account);
-
         });
     }
 }

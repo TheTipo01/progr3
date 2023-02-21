@@ -15,13 +15,18 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientModel {
     public static Account account;
     final ObservableList<Email> messages;
+    private Integer sentMail;
+    private final NotifyController notifyController;
 
-    public ClientModel(TitledPane titledPane, TableView<Email> tableView, TextArea textArea) {
+    public ClientModel(TitledPane titledPane, TableView<Email> tableView, TextArea textArea, NotifyController notifyController) {
         messages = FXCollections.observableArrayList(new ArrayList<>());
+        sentMail = 0;
+        this.notifyController = notifyController;
 
         viewMessagesStartup(tableView);
         displayContent(tableView, textArea);
@@ -31,11 +36,6 @@ public class ClientModel {
         messages.addListener((ListChangeListener) c -> {
             Platform.runLater(() -> {
                 titledPane.textProperty().setValue("Ciao, " + getCurrentEmail() + " (" + getMessagesSize() + " messaggi)");
-                try {
-                    PopupController.showPopup("Nuova mail", "Hai ricevuto una email!", ImageType.Success, null);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
             });
         });
     }
@@ -142,4 +142,23 @@ public class ClientModel {
         }
     }
 
+    public void setMessages(List<Email> emails) {
+        int difference = emails.size() - messages.size();
+
+        synchronized (messages) {
+            Platform.runLater(() -> messages.setAll(emails));
+        }
+
+        if (difference > 0 && (difference - notifyController.getSentMail()) > 0) {
+            notifyController.setSentMail(0);
+
+            Platform.runLater(() -> {
+                try {
+                    PopupController.showPopup("Nuova mail", "Hai ricevuto una email!", ImageType.Success, null);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
 }

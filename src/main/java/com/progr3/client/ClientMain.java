@@ -12,6 +12,7 @@ import java.net.URL;
 public class ClientMain extends Application {
     public static final int port = 42069;
     public static final String host = "localhost";
+    public static final int waitTime = 1000;
 
     public void start(Stage stage) throws IOException {
         URL clientUrl = ClientMain.class.getResource("/client/login.fxml");

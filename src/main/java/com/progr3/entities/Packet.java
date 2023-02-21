@@ -42,11 +42,6 @@ public class Packet implements Serializable {
                     throw new IllegalArgumentException("(Partial Send packet) Data must be a List<String>");
                 }
             }
-            case Notify -> {
-                if (!(data instanceof Account)) {
-                    throw new IllegalArgumentException("(Notify packet) Data must be an Account");
-                }
-            }
             default -> throw new IllegalArgumentException("(Packet) Invalid packet type");
         }
 
