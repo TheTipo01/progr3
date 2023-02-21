@@ -48,13 +48,20 @@ public class Manager {
         return emails;
     }
 
-    public void writeEmail(Email email) throws IOException {
-        Lock write = lock.writeLock();
-        if (email != null) {
-            write.lock();
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./posta/" + account.getAddress() + "/" + email.getId().toString()));
-            oos.writeObject(email);
-            write.unlock();
+    public boolean writeEmail(Email email) {
+        try {
+            Lock write = lock.writeLock();
+            if (email != null) {
+                write.lock();
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./posta/" + account.getAddress() + "/" + email.getId().toString()));
+                oos.writeObject(email);
+                write.unlock();
+            }
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

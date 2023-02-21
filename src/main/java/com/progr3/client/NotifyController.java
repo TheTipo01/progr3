@@ -19,7 +19,7 @@ public class NotifyController {
         }
     }
 
-    public void incrementSetMail() {
+    public void incrementSentMail() {
         synchronized (sentMail) {
             sentMail++;
         }

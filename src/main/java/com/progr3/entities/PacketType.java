@@ -7,4 +7,5 @@ public enum PacketType {
     Delete,
     Error,
     ErrorPartialSend,
+    Read,
 }

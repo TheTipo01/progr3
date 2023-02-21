@@ -27,7 +27,7 @@ public class Packet implements Serializable {
                     throw new IllegalArgumentException("(Send packet) Data must be an Email");
                 }
             }
-            case Delete -> {
+            case Delete, Read -> {
                 if (!(data instanceof Pair && ((Pair<?, ?>) data).getKey() instanceof Email && ((Pair<?, ?>) data).getValue() instanceof Account)) {
                     throw new IllegalArgumentException("(Delete packet) Data must be a Pair<Email, Account>");
                 }

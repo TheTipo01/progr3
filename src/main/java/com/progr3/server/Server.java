@@ -122,7 +122,7 @@ public class Server implements Runnable {
                         }
                     }
 
-
+                    email.setRead();
                     if (notSent.size() == 0) {
                         manager.writeEmail(email);
                         sendPacket(clientSocket, new Packet(PacketType.Error, false));
@@ -141,6 +141,15 @@ public class Server implements Runnable {
                     Manager manager = managers.get(pair.getValue().getAddress());
 
                     sendPacket(clientSocket, new Packet(PacketType.Error, !manager.deleteEmail(pair.getKey())));
+                }
+                case Read -> {
+                    Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
+                    Manager manager = managers.get(pair.getValue().getAddress());
+
+                    Email email = pair.getKey();
+                    email.setRead();
+
+                    sendPacket(clientSocket, new Packet(PacketType.Error, !manager.writeEmail(email)));
                 }
             }
 

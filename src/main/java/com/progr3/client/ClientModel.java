@@ -75,6 +75,18 @@ public class ClientModel {
         }
     }
 
+    public int getNotReadMessages() {
+        int count = 0;
+        synchronized (messages) {
+            for (Email email : messages) {
+                if (!email.isRead()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     public boolean deleteEmail(Email email, Account account) {
         try {
             Socket socket = new Socket(ClientMain.host, ClientMain.port);
@@ -120,5 +132,32 @@ public class ClientModel {
         }
 
         notifyController.setSentMail(0);
+    }
+
+    public void setEmailAsRead(Email email) {
+        if (!email.isRead()) {
+            try {
+                Socket socket = new Socket(ClientMain.host, ClientMain.port);
+
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(new Packet(PacketType.Read, new Pair<>(email, account)));
+
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                Packet packet = (Packet) ois.readObject();
+
+                socket.close();
+
+                int index = messages.indexOf(email);
+                email.setRead();
+
+                if ((boolean) packet.getData()) {
+                    synchronized (messages) {
+                        messages.set(index, email);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

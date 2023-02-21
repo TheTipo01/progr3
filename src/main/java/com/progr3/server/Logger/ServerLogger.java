@@ -59,6 +59,12 @@ public class ServerLogger implements ServerObserver {
                 log(message, Level.INFO);
                 break;
 
+            case Read:
+                email = (Email) pkt.getData();
+                message = String.format("Email with id %s has been read", email.getId().toString());
+                log(message, Level.INFO);
+                break;
+
             default:
                 log("Unhandled packet received", Level.WARNING);
                 break;

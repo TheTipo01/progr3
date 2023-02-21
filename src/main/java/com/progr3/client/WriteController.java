@@ -38,7 +38,8 @@ public class WriteController {
     public void onSendBtnClick() throws IOException {
         to.setDisable(false);
         object.setDisable(false);
-        Packet result = model.sendMail(to.getText(), object.getText(), content.getText());
+        Email email = model.formatEmail(to.getText(), object.getText(), content.getText());
+        Packet result = model.sendMail(email);
         switch (result.getType()) {
             case Error -> {
                 boolean error = (boolean) result.getData();

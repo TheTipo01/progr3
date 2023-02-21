@@ -12,6 +12,7 @@ public class Email implements Serializable {
     private final Date timestamp;
     private final String object;
     private final String sender;
+    private boolean read;
 
     public Email(String sender, List<String> receivers, String object, String text) {
         this.sender = sender;
@@ -20,6 +21,7 @@ public class Email implements Serializable {
         this.text = text;
         this.timestamp = new Date();
         this.id = UUID.randomUUID();
+        this.read = false;
     }
 
     public UUID getId() {
@@ -53,5 +55,13 @@ public class Email implements Serializable {
         }
 
         return false;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead() {
+        read = true;
     }
 }

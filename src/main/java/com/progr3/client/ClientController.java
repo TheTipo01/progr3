@@ -43,13 +43,27 @@ public class ClientController {
 
         clientModel = new ClientModel(notifyController);
 
-        clientModel.addListenerMessages(c -> Platform.runLater(() -> titledPane.textProperty().setValue("Ciao, " + clientModel.getCurrentEmail() + " (" + clientModel.getMessagesSize() + " messaggi)")));
+        updateTitle();
+        clientModel.addListenerMessages(c -> updateTitle());
 
         initializeTableView();
         displayContent();
 
         ServerListener listener = new ServerListener(clientModel);
         listener.start();
+    }
+
+    public void updateTitle() {
+        Platform.runLater(() -> {
+            int unread = clientModel.getNotReadMessages();
+            if (unread > 0) {
+                titledPane.textProperty().setValue("Ciao, " + clientModel.getCurrentEmail() +
+                        " (" + clientModel.getMessagesSize() + " messaggi, di cui " + unread + " non letti)");
+            } else {
+                titledPane.textProperty().setValue("Ciao, " + clientModel.getCurrentEmail() +
+                        " (" + clientModel.getMessagesSize() + " messaggi)");
+            }
+        });
     }
 
     private void displayContent() {
@@ -62,6 +76,8 @@ public class ClientController {
                 Email email = clientModel.getMessage(tablePosition.getRow());
                 textArea.setText(email.getText());
                 receivers.setText(String.join(", ", email.getReceivers()));
+                clientModel.setEmailAsRead(email);
+                updateTitle();
             }
         });
     }

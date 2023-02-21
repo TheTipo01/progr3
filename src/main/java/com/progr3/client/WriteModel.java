@@ -4,7 +4,6 @@ import com.progr3.entities.Email;
 import com.progr3.entities.Packet;
 import com.progr3.entities.PacketType;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -18,33 +17,41 @@ public class WriteModel {
         this.notifyController = notifyController;
     }
 
-    public Packet sendMail(String to, String object, String content) throws IOException {
-        String[] addresses = to.split(",");
-        for (int i = 0; i < addresses.length; i++) {
-            addresses[i] = addresses[i].trim();
-            if (!validateEmail(addresses[i])) {
-                return new Packet(PacketType.Error, true);
-            }
+    public Packet sendMail(Email email) {
+        if (email == null) {
+            return new Packet(PacketType.Error, true);
         }
 
         try {
             Socket clientSocket = new Socket(ClientMain.host, ClientMain.port);
 
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-            out.writeObject(new Packet(PacketType.Send, new Email(ClientModel.account.getAddress(), Arrays.stream(addresses).toList(), object, content)));
+            out.writeObject(new Packet(PacketType.Send, email));
 
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             Packet pkt = (Packet) in.readObject();
 
             clientSocket.close();
 
-            notifyController.incrementSetMail();
+            notifyController.incrementSentMail();
 
             return pkt;
         } catch (Exception e) {
             e.printStackTrace();
             return new Packet(PacketType.Error, true);
         }
+    }
+
+    public Email formatEmail(String to, String object, String content) {
+        String[] addresses = to.split(",");
+        for (int i = 0; i < addresses.length; i++) {
+            addresses[i] = addresses[i].trim();
+            if (!validateEmail(addresses[i])) {
+                return null;
+            }
+        }
+
+        return new Email(ClientModel.account.getAddress(), Arrays.stream(addresses).toList(), object, content);
     }
 
     /**
