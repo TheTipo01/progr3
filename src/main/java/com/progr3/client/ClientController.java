@@ -1,5 +1,7 @@
 package com.progr3.client;
 
+import com.progr3.client.enumerations.ImageType;
+import com.progr3.client.enumerations.WriteMode;
 import com.progr3.entities.Email;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -52,11 +54,11 @@ public class ClientController {
 
     private void displayContent() {
         tableView.getSelectionModel().setCellSelectionEnabled(true);
-        ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
+        ObservableList<TablePosition> selectedCells = tableView.getSelectionModel().getSelectedCells();
 
-        selectedCells.addListener((ListChangeListener) c -> {
+        selectedCells.addListener((ListChangeListener<TablePosition>) c -> {
             if (selectedCells.size() > 0) {
-                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                TablePosition tablePosition = selectedCells.get(0);
                 Email email = clientModel.getMessage(tablePosition.getRow());
                 textArea.setText(email.getText());
                 receivers.setText(String.join(", ", email.getReceivers()));
@@ -91,40 +93,35 @@ public class ClientController {
         tableView.getColumns().addAll(objectCol, senderCol, dateCol);
         clientModel.bindTableView(tableView);
 
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         dateCol.setSortType(TableColumn.SortType.DESCENDING);
         tableView.getSortOrder().add(dateCol);
     }
 
-    public void onBtnWrite(ActionEvent event) throws IOException {
-        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
-        FXMLLoader loader = new FXMLLoader(clientUrl);
-        Scene scene = new Scene(loader.load());
-        WriteController writeController = loader.getController();
-        writeController.setNotify(notifyController);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
-    }
-
-    public void onBtnDelete(ActionEvent event) throws IOException {
+    public void onBtnDelete() throws IOException {
         Email email = tableView.getSelectionModel().getSelectedItem();
 
         PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
             clientModel.deleteEmail(email, ClientModel.account);
+            //TODO: fare qualcosa col risultato della call: controllare se è stata eliminata o meno
         });
     }
 
-    public void onBtnReply(ActionEvent event) throws IOException {
-        Email email = tableView.getSelectionModel().getSelectedItem();
-
+    public void openWrite(WriteMode mode, Email email) throws IOException {
         URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
         Scene scene = new Scene(loader.load());
-
         WriteController writeController = loader.getController();
         writeController.setNotify(notifyController);
-        writeController.setParamsReply(email);
+
+        if (email != null) {
+            switch (mode) {
+                case Reply -> writeController.setParamsReply(email);
+                case ReplyAll -> writeController.setParamsReplyAll(email);
+                case Forward -> writeController.setParamsForward(email);
+            }
+        }
 
         Stage stage = new Stage();
         stage.setScene(scene);
@@ -132,37 +129,19 @@ public class ClientController {
         stage.show();
     }
 
-    public void onBtnReplyAll(ActionEvent event) throws IOException {
-        Email email = tableView.getSelectionModel().getSelectedItem();
-
-        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
-        FXMLLoader loader = new FXMLLoader(clientUrl);
-        Scene scene = new Scene(loader.load());
-
-        WriteController writeController = loader.getController();
-        writeController.setNotify(notifyController);
-        writeController.setParamsReplyAll(email);
-
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+    public void onBtnWrite() throws IOException {
+        openWrite(WriteMode.Normal, null);
     }
 
-    public void onBtnForward(ActionEvent event) throws IOException {
-        Email email = tableView.getSelectionModel().getSelectedItem();
+    public void onBtnReply() throws IOException {
+        openWrite(WriteMode.Reply, tableView.getSelectionModel().getSelectedItem());
+    }
 
-        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
-        FXMLLoader loader = new FXMLLoader(clientUrl);
-        Scene scene = new Scene(loader.load());
+    public void onBtnReplyAll() throws IOException {
+        openWrite(WriteMode.ReplyAll, tableView.getSelectionModel().getSelectedItem());
+    }
 
-        WriteController writeController = loader.getController();
-        writeController.setNotify(notifyController);
-        writeController.setParamsForward(email);
-
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+    public void onBtnForward() throws IOException {
+        openWrite(WriteMode.Forward, tableView.getSelectionModel().getSelectedItem());
     }
 }

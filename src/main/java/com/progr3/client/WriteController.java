@@ -1,10 +1,9 @@
 package com.progr3.client;
 
+import com.progr3.client.enumerations.ImageType;
 import com.progr3.entities.Email;
 import com.progr3.entities.Packet;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -29,12 +28,6 @@ public class WriteController {
     private TextArea content;
 
     @FXML
-    private Button send;
-
-    @FXML
-    private Button close;
-
-    @FXML
     public void initialize() {
         model = new WriteModel();
         from.setText(ClientModel.account.getAddress());
@@ -42,7 +35,7 @@ public class WriteController {
     }
 
     @FXML
-    public void onSendBtnClick(ActionEvent event) throws IOException {
+    public void onSendBtnClick() throws IOException {
         to.setDisable(false);
         object.setDisable(false);
         Packet result = model.sendMail(to.getText(), object.getText(), content.getText());
@@ -75,7 +68,7 @@ public class WriteController {
     }
 
     @FXML
-    public void onCloseBtnClick(ActionEvent event) {
+    public void onCloseBtnClick() {
         ((Stage) content.getScene().getWindow()).close();
     }
 

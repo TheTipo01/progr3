@@ -12,4 +12,6 @@ module com.progr3.client {
     exports com.progr3.server.Logger;
     opens com.progr3.server.Logger to javafx.fxml;
     exports com.progr3.entities;
+    exports com.progr3.client.enumerations;
+    opens com.progr3.client.enumerations to javafx.fxml;
 }

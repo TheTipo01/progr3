@@ -1,5 +1,6 @@
 package com.progr3.client;
 
+import com.progr3.client.enumerations.ImageType;
 import com.progr3.entities.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -59,13 +60,7 @@ public class ClientModel {
     }
 
     public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public void addEmail(Email email) {
-        synchronized (messages) {
-            messages.add(email);
-        }
+        ClientModel.account = account;
     }
 
     public Email getMessage(int index) {
@@ -125,9 +120,5 @@ public class ClientModel {
         }
 
         notifyController.setSentMail(0);
-    }
-
-    public void replyTo(Email email) {
-
     }
 }

@@ -1,4 +1,4 @@
-package com.progr3.client;
+package com.progr3.client.enumerations;
 
 public enum ImageType {
     Error,

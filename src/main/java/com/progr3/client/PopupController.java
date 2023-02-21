@@ -1,5 +1,6 @@
 package com.progr3.client;
 
+import com.progr3.client.enumerations.ImageType;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -31,15 +32,12 @@ public class PopupController {
 
     public void setImage(ImageType image) {
         switch (image) {
-            case Error -> {
-                this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/x-octagon-fill.png"))));
-            }
-            case Success -> {
-                this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/check-circle-fill.png"))));
-            }
-            case Warning -> {
-                this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/exclamation-triangle-fill.png"))));
-            }
+            case Error ->
+                    this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/x-octagon-fill.png"))));
+            case Success ->
+                    this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/check-circle-fill.png"))));
+            case Warning ->
+                    this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/exclamation-triangle-fill.png"))));
         }
     }
 
@@ -48,15 +46,14 @@ public class PopupController {
         yes.setOnAction((event1) -> {
             event.handle(event1);
             // Called to close the popup
-            onCloseButton(event1);
+            onCloseButton();
         });
     }
 
-    public void onCloseButton(ActionEvent event) {
+    public void onCloseButton() {
         ((Stage) content.getScene().getWindow()).close();
     }
 
-    // TODO: maybe reworkare in MVC? idk se è interamente corretto? bruh
     public static void showPopup(String title, String content, ImageType image, EventHandler<ActionEvent> event) throws IOException {
         URL clientUrl = ClientMain.class.getResource("/client/popup.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);

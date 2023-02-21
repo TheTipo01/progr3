@@ -36,6 +36,8 @@ public class ServerListener extends Thread {
                     }
                 }
 
+                ois.close();
+                oos.close();
                 socket.close();
 
                 Thread.sleep(ClientMain.waitTime);

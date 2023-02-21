@@ -30,6 +30,7 @@ public class Server implements Runnable {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
             oos.writeObject(pkt);
+            oos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,13 +144,20 @@ public class Server implements Runnable {
                 }
             }
 
+            input.close();
+
             for (ServerObserver o : observers)
                 o.onReceive(packet);
-
 
         } catch (Exception e) {
             for (ServerObserver o : observers)
                 o.onError(clientSocket, e);
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
