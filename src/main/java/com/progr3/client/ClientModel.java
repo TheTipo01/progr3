@@ -119,6 +119,7 @@ public class ClientModel {
 
         synchronized (messages) {
             Platform.runLater(() -> messages.setAll(emails));
+            messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
         }
 
         if (difference > 0 && (difference - notifyController.getSentMail()) > 0) {

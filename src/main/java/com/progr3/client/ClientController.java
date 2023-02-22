@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
@@ -78,6 +79,7 @@ public class ClientController {
                 textArea.setText(email.getText());
                 receivers.setText(String.join(", ", email.getReceivers()));
                 clientModel.setEmailAsRead(email);
+                tableView.refresh();
                 updateTitle();
             }
         });
@@ -114,6 +116,26 @@ public class ClientController {
 
         dateCol.setSortType(TableColumn.SortType.DESCENDING);
         tableView.getSortOrder().add(dateCol);
+
+
+        tableView.setRowFactory(new Callback<>() {
+            @Override
+            public TableRow<Email> call(TableView<Email> email) {
+                return new TableRow<>() {
+                    @Override
+                    protected void updateItem(Email item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            if (item.isRead()) {
+                                setStyle("");
+                            } else {
+                                setStyle("-fx-font-weight: bold");
+                            }
+                        }
+                    }
+                };
+            }
+        });
     }
 
     public void onBtnDelete() throws IOException {

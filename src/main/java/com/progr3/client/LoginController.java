@@ -1,6 +1,7 @@
 package com.progr3.client;
 
 import com.progr3.entities.Account;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -42,6 +43,12 @@ public class LoginController {
             Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
             Stage stage = new Stage();
+
+            stage.setOnCloseRequest(t -> {
+                Platform.exit();
+                System.exit(0);
+            });
+
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
