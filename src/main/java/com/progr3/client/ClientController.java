@@ -35,6 +35,9 @@ public class ClientController {
     @FXML
     private TextArea textArea;
 
+    @FXML
+    private Label status;
+
     private ClientModel clientModel;
 
     private NotifyController notifyController;
@@ -47,6 +50,19 @@ public class ClientController {
 
         updateTitle();
         clientModel.addListenerMessages(c -> updateTitle());
+        clientModel.addListenerOnline(((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if (newValue) {
+                    status.setText("Online");
+                    status.getStyleClass().remove("lbl-danger");
+                    status.getStyleClass().add("lbl-success");
+                } else {
+                    status.setText("Offline");
+                    status.getStyleClass().remove("lbl-success");
+                    status.getStyleClass().add("lbl-danger");
+                }
+            });
+        }));
 
         initializeTableView();
         displayContent();
@@ -142,8 +158,14 @@ public class ClientController {
         Email email = tableView.getSelectionModel().getSelectedItem();
 
         PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
-            clientModel.deleteEmail(email, ClientModel.account);
-            //TODO: fare qualcosa col risultato della call: controllare se è stata eliminata o meno
+            boolean status = clientModel.deleteEmail(email, ClientModel.account);
+            if (!status) {
+                try {
+                    PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 

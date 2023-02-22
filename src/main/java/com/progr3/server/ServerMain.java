@@ -2,6 +2,7 @@ package com.progr3.server;
 
 import com.progr3.client.LoginMain;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,6 +18,11 @@ public class ServerMain extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         stage.setTitle("Server Log");
         stage.setScene(scene);
+
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            System.exit(0);
+        });
 
         List<ServerObserver> observers = new ArrayList<>();
         observers.add(fxmlLoader.getController());

@@ -1,5 +1,6 @@
 package com.progr3.client;
 
+import com.progr3.client.enumerations.ImageType;
 import com.progr3.entities.Account;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -33,29 +34,33 @@ public class LoginController {
     @FXML
     public void onBtnLogin() throws Exception {
         Account account = new Account(email.getText(), password.getText());
-        if (!model.verifyAccount(account)) {
-            errorLabel.setVisible(false);
+        try {
+            if (!model.verifyAccount(account)) {
+                errorLabel.setVisible(false);
 
-            ClientModel.account = account;
+                ClientModel.account = account;
 
-            URL clientUrl = LoginMain.class.getResource("/client/client.fxml");
-            FXMLLoader loader = new FXMLLoader(clientUrl);
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-            Stage stage = new Stage();
+                URL clientUrl = LoginMain.class.getResource("/client/client.fxml");
+                FXMLLoader loader = new FXMLLoader(clientUrl);
+                Scene scene = new Scene(loader.load());
+                scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+                Stage stage = new Stage();
 
-            stage.setOnCloseRequest(t -> {
-                Platform.exit();
-                System.exit(0);
-            });
+                stage.setOnCloseRequest(t -> {
+                    Platform.exit();
+                    System.exit(0);
+                });
 
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
+                stage.setScene(scene);
+                stage.setResizable(false);
+                stage.show();
 
-            ((Stage) email.getScene().getWindow()).close();
-        } else {
-            errorLabel.setVisible(true);
+                ((Stage) email.getScene().getWindow()).close();
+            } else {
+                errorLabel.setVisible(true);
+            }
+        } catch (Exception e) {
+            PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
         }
     }
 

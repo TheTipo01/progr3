@@ -4,6 +4,7 @@ import com.progr3.entities.Email;
 import com.progr3.entities.Packet;
 import com.progr3.entities.PacketType;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -17,7 +18,7 @@ public class WriteModel {
         this.notifyController = notifyController;
     }
 
-    public Packet sendMail(Email email) {
+    public Packet sendMail(Email email) throws IOException {
         if (email == null) {
             return new Packet(PacketType.Error, true);
         }
@@ -37,7 +38,6 @@ public class WriteModel {
 
             return pkt;
         } catch (Exception e) {
-            e.printStackTrace();
             return new Packet(PacketType.Error, true);
         }
     }

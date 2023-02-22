@@ -3,6 +3,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <TitledPane fx:id="titledPane" animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" text="untitled" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progr3.client.ClientController">
   <content>
@@ -38,6 +39,15 @@
                               <String fx:value="btn" />
                               <String fx:value="btn-primary" />
                            </styleClass></Button>
+                        <Label fx:id="status" layoutX="382.0" layoutY="6.0" text="Online">
+                           <styleClass>
+                              <String fx:value="lbl" />
+                              <String fx:value="lbl-success" />
+                           </styleClass>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children></AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>

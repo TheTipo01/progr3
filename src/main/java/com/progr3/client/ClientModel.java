@@ -3,6 +3,9 @@ package com.progr3.client;
 import com.progr3.client.enumerations.ImageType;
 import com.progr3.entities.*;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -20,12 +23,22 @@ public class ClientModel {
     public static Account account;
     private final ObservableList<Email> messages;
     private final NotifyController notifyController;
+    private final BooleanProperty serverOnline;
 
     public ClientModel(NotifyController notifyController) {
         messages = FXCollections.observableArrayList(new ArrayList<>());
         this.notifyController = notifyController;
+        serverOnline = new SimpleBooleanProperty(true);
 
         loadMessages();
+    }
+
+    public BooleanProperty getServerOnline() {
+        return serverOnline;
+    }
+
+    public void setServerOnline(boolean online) {
+        serverOnline.set(online);
     }
 
     private void loadMessages() {
@@ -105,13 +118,16 @@ public class ClientModel {
 
             return (boolean) packet.getData();
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }
 
     public void bindTableView(TableView<Email> tableView) {
         tableView.setItems(messages);
+    }
+
+    public void addListenerOnline(ChangeListener<Boolean> listener) {
+        serverOnline.addListener(listener);
     }
 
     public void setMessages(List<Email> emails) {

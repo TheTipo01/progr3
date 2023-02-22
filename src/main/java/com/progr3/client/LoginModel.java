@@ -10,22 +10,17 @@ import java.net.Socket;
 
 public class LoginModel {
 
-    public boolean verifyAccount(Account account) {
-        try {
-            Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);
-            ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+    public boolean verifyAccount(Account account) throws Exception {
+        Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);
+        ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-            out.writeObject(new Packet(PacketType.Login, account));
+        out.writeObject(new Packet(PacketType.Login, account));
 
-            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-            Packet pkt = (Packet) in.readObject();
+        ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+        Packet pkt = (Packet) in.readObject();
 
-            clientSocket.close();
+        clientSocket.close();
 
-            return (boolean) pkt.getData();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return (boolean) pkt.getData();
     }
 }

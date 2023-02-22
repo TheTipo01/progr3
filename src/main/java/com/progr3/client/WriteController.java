@@ -45,7 +45,7 @@ public class WriteController {
                 boolean error = (boolean) result.getData();
 
                 if (error) {
-                    PopupController.showPopup("Errore", "Errore durante l'invio dell'email.", ImageType.Error, null);
+                    PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
                 } else {
                     ((Stage) from.getScene().getWindow()).close();
                     PopupController.showPopup("Successo", "Email inviata con successo.", ImageType.Success, null);

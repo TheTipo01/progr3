@@ -21,6 +21,12 @@ public class ServerListener extends Thread {
     public void run() {
         while (!Thread.interrupted()) {
             try {
+                Thread.sleep(LoginMain.waitTime);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
                 Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
@@ -40,9 +46,9 @@ public class ServerListener extends Thread {
                 oos.close();
                 socket.close();
 
-                Thread.sleep(LoginMain.waitTime);
+                model.setServerOnline(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                model.setServerOnline(false);
             }
         }
     }
