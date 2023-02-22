@@ -1,6 +1,6 @@
 package com.progr3.server;
 
-import com.progr3.client.ClientMain;
+import com.progr3.client.LoginMain;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,7 +13,7 @@ import java.util.List;
 public class ServerMain extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ClientMain.class.getResource("/server/view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginMain.class.getResource("/server/view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         stage.setTitle("Server Log");
         stage.setScene(scene);

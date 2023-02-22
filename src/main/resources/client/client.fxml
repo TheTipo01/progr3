@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -12,11 +13,31 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>
                         <TableView fx:id="tableView" layoutY="34.0" prefHeight="153.0" prefWidth="800.0" />
-                        <Button layoutX="740.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnWrite" text="Scrivi" />
-                        <Button layoutX="670.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnDelete" text="Cancella" />
-                        <Button layoutX="6.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnReply" text="Rispondi" />
-                        <Button layoutX="77.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnReplyAll" text="Rispondi a tutti" />
-                        <Button layoutX="182.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnForward" text="Inoltra" />
+                        <Button layoutX="712.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnWrite" text="Scrivi">
+                           <styleClass>
+                              <String fx:value="btn" />
+                              <String fx:value="btn-success" />
+                           </styleClass></Button>
+                        <Button layoutX="619.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnDelete" text="Cancella">
+                           <styleClass>
+                              <String fx:value="btn" />
+                              <String fx:value="btn-danger" />
+                           </styleClass></Button>
+                        <Button layoutX="5.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnReply" text="Rispondi">
+                           <styleClass>
+                              <String fx:value="btn" />
+                              <String fx:value="btn-primary" />
+                           </styleClass></Button>
+                        <Button layoutX="94.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnReplyAll" text="Rispondi a tutti">
+                           <styleClass>
+                              <String fx:value="btn" />
+                              <String fx:value="btn-primary" />
+                           </styleClass></Button>
+                        <Button layoutX="222.0" layoutY="2.0" mnemonicParsing="false" onAction="#onBtnForward" text="Inoltra">
+                           <styleClass>
+                              <String fx:value="btn" />
+                              <String fx:value="btn-primary" />
+                           </styleClass></Button>
                      </children></AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>

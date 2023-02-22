@@ -21,7 +21,7 @@ public class ServerListener extends Thread {
     public void run() {
         while (!Thread.interrupted()) {
             try {
-                Socket socket = new Socket(ClientMain.host, ClientMain.port);
+                Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 oos.writeObject(new Packet(PacketType.Inbox, new Inbox(ClientModel.account, null)));
@@ -40,7 +40,7 @@ public class ServerListener extends Thread {
                 oos.close();
                 socket.close();
 
-                Thread.sleep(ClientMain.waitTime);
+                Thread.sleep(LoginMain.waitTime);
             } catch (Exception e) {
                 e.printStackTrace();
             }

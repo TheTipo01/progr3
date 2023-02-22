@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.net.URL;
 
@@ -36,9 +37,10 @@ public class LoginController {
 
             ClientModel.account = account;
 
-            URL clientUrl = ClientMain.class.getResource("/client/client.fxml");
+            URL clientUrl = LoginMain.class.getResource("/client/client.fxml");
             FXMLLoader loader = new FXMLLoader(clientUrl);
             Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setResizable(false);

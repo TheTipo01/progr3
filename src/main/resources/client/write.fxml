@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -12,7 +13,15 @@
       <TextField fx:id="object" layoutX="64.0" layoutY="102.0" prefHeight="25.0" prefWidth="524.0" AnchorPane.rightAnchor="12.0" />
       <Label layoutX="9.0" layoutY="106.0" text="Oggetto:" AnchorPane.leftAnchor="12.0" />
       <TextArea fx:id="content" layoutX="10.0" layoutY="143.0" prefHeight="247.0" prefWidth="578.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
-      <Button fx:id="send" onAction="#onSendBtnClick" layoutX="515.0" layoutY="23.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Invia" />
-      <Button fx:id="close" onAction="#onCloseBtnClick" layoutX="515.0" layoutY="57.0" mnemonicParsing="false" text="Chiudi" />
+      <Button fx:id="send" layoutX="508.0" layoutY="23.0" mnemonicParsing="false" onAction="#onSendBtnClick" prefHeight="25.0" prefWidth="50.0" text="Invia">
+         <styleClass>
+            <String fx:value="btn" />
+            <String fx:value="btn-success" />
+         </styleClass></Button>
+      <Button fx:id="close" layoutX="508.0" layoutY="57.0" mnemonicParsing="false" onAction="#onCloseBtnClick" text="Chiudi">
+         <styleClass>
+            <String fx:value="btn" />
+            <String fx:value="btn-danger" />
+         </styleClass></Button>
    </children>
 </AnchorPane>

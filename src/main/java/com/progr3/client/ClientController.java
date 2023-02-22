@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
 import java.net.URL;
@@ -125,9 +126,10 @@ public class ClientController {
     }
 
     public void openWrite(WriteMode mode, Email email) throws IOException {
-        URL clientUrl = ClientMain.class.getResource("/client/write.fxml");
+        URL clientUrl = LoginMain.class.getResource("/client/write.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         WriteController writeController = loader.getController();
         writeController.setNotify(notifyController);
 

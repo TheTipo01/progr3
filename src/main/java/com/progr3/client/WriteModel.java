@@ -23,7 +23,7 @@ public class WriteModel {
         }
 
         try {
-            Socket clientSocket = new Socket(ClientMain.host, ClientMain.port);
+            Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);
 
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
             out.writeObject(new Packet(PacketType.Send, email));

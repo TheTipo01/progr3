@@ -2,7 +2,6 @@ package com.progr3.server.Logger;
 
 import com.progr3.entities.Account;
 import com.progr3.entities.Email;
-import com.progr3.entities.Inbox;
 import com.progr3.entities.Packet;
 import com.progr3.server.ServerObserver;
 import javafx.fxml.FXML;
@@ -48,9 +47,6 @@ public class ServerLogger implements ServerObserver {
                 break;
 
             case Inbox:
-                Inbox inbox = (Inbox) pkt.getData();
-                message = String.format("User %s loaded their inbox", inbox.getAccount().getAddress());
-                log(message, Level.INFO);
                 break;
 
             case Delete:

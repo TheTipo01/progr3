@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="186.0" prefWidth="192.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.progr3.client.LoginController">
-   <TextField fx:id="email" layoutX="22.0" layoutY="47.0" promptText="Email" />
-   <TextField fx:id="password" accessibleRole="PASSWORD_FIELD" layoutX="22.0" layoutY="83.0" promptText="Password" />
-   <Button layoutX="71.0" layoutY="138.0" mnemonicParsing="false" onAction="#onBtnLogin" text="Accedi" />
-   <Label layoutX="68.0" layoutY="14.0" text="Benvenuto" />
+   <TextField fx:id="email" layoutX="22.0" layoutY="47.0" promptText="Email" AnchorPane.leftAnchor="22.0" AnchorPane.rightAnchor="21.0" />
+   <TextField fx:id="password" accessibleRole="PASSWORD_FIELD" layoutX="22.0" layoutY="83.0" promptText="Password" AnchorPane.leftAnchor="22.0" AnchorPane.rightAnchor="21.0" />
+   <Button layoutX="71.0" layoutY="138.0" mnemonicParsing="false" onAction="#onBtnLogin" text="Accedi" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="70.0">
+      <styleClass>
+         <String fx:value="btn" />
+         <String fx:value="btn-primary" />
+      </styleClass></Button>
+   <Label layoutX="80.0" layoutY="14.0" text="Benvenuto" textAlignment="CENTER" />
    <Label fx:id="errorLabel" layoutX="30.0" layoutY="115.0" text="Utente o password errati!" visible="false" />
 </AnchorPane>

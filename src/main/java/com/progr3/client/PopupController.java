@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,11 +34,11 @@ public class PopupController {
     public void setImage(ImageType image) {
         switch (image) {
             case Error ->
-                    this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/x-octagon-fill.png"))));
+                    this.image.setImage(new Image(Objects.requireNonNull(LoginMain.class.getResourceAsStream("/icons/x-octagon-fill.png"))));
             case Success ->
-                    this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/check-circle-fill.png"))));
+                    this.image.setImage(new Image(Objects.requireNonNull(LoginMain.class.getResourceAsStream("/icons/check-circle-fill.png"))));
             case Warning ->
-                    this.image.setImage(new Image(Objects.requireNonNull(ClientMain.class.getResourceAsStream("/icons/exclamation-triangle-fill.png"))));
+                    this.image.setImage(new Image(Objects.requireNonNull(LoginMain.class.getResourceAsStream("/icons/exclamation-triangle-fill.png"))));
         }
     }
 
@@ -55,9 +56,10 @@ public class PopupController {
     }
 
     public static void showPopup(String title, String content, ImageType image, EventHandler<ActionEvent> event) throws IOException {
-        URL clientUrl = ClientMain.class.getResource("/client/popup.fxml");
+        URL clientUrl = LoginMain.class.getResource("/client/popup.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle(title);

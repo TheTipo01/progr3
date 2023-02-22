@@ -30,7 +30,7 @@ public class ClientModel {
 
     private void loadMessages() {
         try {
-            Socket socket = new Socket(ClientMain.host, ClientMain.port);
+            Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(new Packet(PacketType.Inbox, new Inbox(account, null)));
@@ -89,7 +89,7 @@ public class ClientModel {
 
     public boolean deleteEmail(Email email, Account account) {
         try {
-            Socket socket = new Socket(ClientMain.host, ClientMain.port);
+            Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(new Packet(PacketType.Delete, new Pair<>(email, account)));
@@ -137,7 +137,7 @@ public class ClientModel {
     public void setEmailAsRead(Email email) {
         if (!email.isRead()) {
             try {
-                Socket socket = new Socket(ClientMain.host, ClientMain.port);
+                Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 oos.writeObject(new Packet(PacketType.Read, new Pair<>(email, account)));
