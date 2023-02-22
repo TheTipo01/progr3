@@ -7,6 +7,7 @@ import com.progr3.entities.Packet;
 import com.progr3.server.ServerObserver;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.util.Pair;
 
 import java.net.Socket;
 import java.util.Date;
@@ -39,31 +40,31 @@ public class ServerLogger implements ServerObserver {
     }
 
     @Override
-    public void onPacket(Packet pkt) {
-        switch (pkt.getType()) {
+    public void onPacket(Packet packet) {
+        switch (packet.getType()) {
             case Login -> {
-                Account account = (Account) pkt.getData();
+                Account account = (Account) packet.getData();
                 String message = String.format("User %s logged in", account.getAddress());
                 log(message, Level.INFO);
             }
             case Send -> {
-                Email email = (Email) pkt.getData();
+                Email email = (Email) packet.getData();
                 String message = String.format("%s sent an email to %s", email.getSender(), email.getReceivers().toString());
                 log(message, Level.INFO);
             }
             case Inbox -> {
-                Inbox inbox = (Inbox) pkt.getData();
+                Inbox inbox = (Inbox) packet.getData();
                 String message = String.format("User %s loaded their inbox", inbox.getAccount().getAddress());
                 log(message, Level.DEBUG);
             }
             case Delete -> {
-                Email email = (Email) pkt.getData();
-                String message = String.format("Email with id %s has been deleted", email.getId().toString());
+                Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
+                String message = String.format("Email with id %s has been deleted", pair.getKey().getId().toString());
                 log(message, Level.INFO);
             }
             case Read -> {
-                Email email = (Email) pkt.getData();
-                String message = String.format("Email with id %s has been read", email.getId().toString());
+                Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
+                String message = String.format("Email with id %s has been read", pair.getKey().getId().toString());
                 log(message, Level.INFO);
             }
             default -> log("Unhandled packet received", Level.WARNING);

@@ -55,6 +55,7 @@ public class Manager {
                 write.lock();
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./posta/" + account.getAddress() + "/" + email.getId().toString()));
                 oos.writeObject(email);
+                oos.close();
                 write.unlock();
             }
 

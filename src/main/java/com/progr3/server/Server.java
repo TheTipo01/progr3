@@ -98,7 +98,7 @@ public class Server implements Runnable {
                 case Login -> {
                     Account account = (Account) packet.getData();
 
-                    sendPacket(clientSocket, new Packet(PacketType.Error, !managers.containsKey(account.getAddress())));
+                    sendPacket(clientSocket, new Packet<>(PacketType.Error, !managers.containsKey(account.getAddress())));
                 }
                 case Inbox -> {
                     Inbox inbox = (Inbox) packet.getData();
@@ -109,18 +109,18 @@ public class Server implements Runnable {
                         emails = manager.getInbox();
                     }
 
-                    sendPacket(clientSocket, new Packet(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
+                    sendPacket(clientSocket, new Packet<>(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
                 }
                 case Send -> {
                     Email email = (Email) packet.getData();
                     Manager manager = managers.get(email.getSender());
 
                     if (email.getReceivers().size() == 0) {
-                        sendPacket(clientSocket, new Packet(PacketType.Error, true));
+                        sendPacket(clientSocket, new Packet<>(PacketType.Error, true));
                         return;
                     }
 
-                    List<String> notSent = new ArrayList<>();
+                    ArrayList<String> notSent = new ArrayList<>();
                     for (String address : email.getReceivers()) {
                         if (managers.containsKey(address)) {
                             managers.get(address).writeEmail(email);
@@ -132,13 +132,13 @@ public class Server implements Runnable {
                     email.setRead();
                     if (notSent.size() == 0) {
                         manager.writeEmail(email);
-                        sendPacket(clientSocket, new Packet(PacketType.Error, false));
+                        sendPacket(clientSocket, new Packet<>(PacketType.Error, false));
                     } else {
                         if (notSent.size() != email.getReceivers().size()) {
                             manager.writeEmail(email);
-                            sendPacket(clientSocket, new Packet(PacketType.ErrorPartialSend, notSent));
+                            sendPacket(clientSocket, new Packet<>(PacketType.ErrorPartialSend, notSent));
                         } else {
-                            sendPacket(clientSocket, new Packet(PacketType.Error, true));
+                            sendPacket(clientSocket, new Packet<>(PacketType.Error, true));
                         }
                     }
                 }
@@ -147,7 +147,7 @@ public class Server implements Runnable {
 
                     Manager manager = managers.get(pair.getValue().getAddress());
 
-                    sendPacket(clientSocket, new Packet(PacketType.Error, !manager.deleteEmail(pair.getKey())));
+                    sendPacket(clientSocket, new Packet<>(PacketType.Error, manager.deleteEmail(pair.getKey())));
                 }
                 case Read -> {
                     Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
@@ -156,7 +156,7 @@ public class Server implements Runnable {
                     Email email = pair.getKey();
                     email.setRead();
 
-                    sendPacket(clientSocket, new Packet(PacketType.Error, !manager.writeEmail(email)));
+                    sendPacket(clientSocket, new Packet<>(PacketType.Error, !manager.writeEmail(email)));
                 }
             }
 

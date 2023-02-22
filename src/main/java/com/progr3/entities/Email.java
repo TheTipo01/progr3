@@ -5,6 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Entity that represents an email. Other than the basic properties, an email
+ * is identified by its unique UUID, and has a flag that determines if it has been
+ * read by the user.
+ */
 public class Email implements Serializable {
     private final UUID id;
     private final List<String> receivers;

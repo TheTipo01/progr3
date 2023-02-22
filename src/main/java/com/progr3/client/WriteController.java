@@ -96,7 +96,11 @@ public class WriteController {
         List<String> receivers = new ArrayList<>(email.getReceivers());
         receivers.remove(ClientModel.account.getAddress());
 
-        to.setText(email.getSender() + ", " + String.join(", ", receivers));
+        if (receivers.size() > 0) {
+            to.setText(email.getSender() + ", " + String.join(", ", receivers));
+        } else {
+            to.setText(email.getSender());
+        }
     }
 
     public void setParamsForward(Email email) {

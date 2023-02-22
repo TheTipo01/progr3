@@ -5,11 +5,17 @@ import javafx.util.Pair;
 import java.io.Serializable;
 import java.util.List;
 
-public class Packet implements Serializable {
+/**
+ * Entity that defines a Packet and all its possible types, as described by
+ * the PacketType class. Its generator checks the type of data that a Packet
+ * is generated with, and throws an exception if it does not match the packet
+ * type.
+ */
+public class Packet<T extends Serializable> implements Serializable {
     private final PacketType type;
-    private final Object data;
+    private final T data;
 
-    public Packet(PacketType type, Object data) {
+    public Packet(PacketType type, T data) {
         this.type = type;
         switch (type) {
             case Login -> {
@@ -57,7 +63,7 @@ public class Packet implements Serializable {
         return type;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 }

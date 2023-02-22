@@ -30,13 +30,13 @@ public class ServerPoller extends Thread {
                 Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(new Packet(PacketType.Inbox, new Inbox(ClientModel.account, null)));
+                oos.writeObject(new Packet<>(PacketType.Inbox, new Inbox(ClientModel.account, null)));
 
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
-                Packet pkt = (Packet) ois.readObject();
+                Packet<Inbox> pkt = (Packet<Inbox>) ois.readObject();
                 if (pkt.getType() == PacketType.Inbox) {
-                    List<Email> emails = ((Inbox) pkt.getData()).getEmails();
+                    List<Email> emails = pkt.getData().getEmails();
                     if (emails.size() != model.getMessagesSize()) {
                         model.setMessages(emails);
                     }

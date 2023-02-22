@@ -2,6 +2,9 @@ package com.progr3.entities;
 
 import java.io.Serializable;
 
+/**
+ * Represents an email account, with the associated email and password.
+ */
 public class Account implements Serializable {
     private final String address;
     private final String password;

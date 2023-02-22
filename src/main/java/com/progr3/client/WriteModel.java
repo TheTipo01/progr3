@@ -17,19 +17,19 @@ public class WriteModel {
         this.notify = notify;
     }
 
-    public Packet sendMail(Email email) {
+    public Packet<Boolean> sendMail(Email email) {
         if (email == null) {
-            return new Packet(PacketType.Error, true);
+            return new Packet<>(PacketType.Error, true);
         }
 
         try {
             Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);
 
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-            out.writeObject(new Packet(PacketType.Send, email));
+            out.writeObject(new Packet<>(PacketType.Send, email));
 
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-            Packet pkt = (Packet) in.readObject();
+            Packet<Boolean> pkt = (Packet<Boolean>) in.readObject();
 
             clientSocket.close();
 
@@ -37,7 +37,7 @@ public class WriteModel {
 
             return pkt;
         } catch (Exception e) {
-            return new Packet(PacketType.ConnectionError, true);
+            return new Packet<>(PacketType.ConnectionError, true);
         }
     }
 

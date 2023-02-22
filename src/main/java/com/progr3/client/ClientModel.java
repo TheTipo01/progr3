@@ -41,14 +41,14 @@ public class ClientModel {
         Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-        oos.writeObject(new Packet(PacketType.Inbox, new Inbox(account, null)));
+        oos.writeObject(new Packet<>(PacketType.Inbox, new Inbox(account, null)));
 
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-        Packet packet = (Packet) ois.readObject();
+        Packet<Inbox> packet = (Packet<Inbox>) ois.readObject();
 
         socket.close();
 
-        Inbox inbox = (Inbox) packet.getData();
+        Inbox inbox = packet.getData();
 
         if (packet.getType() == PacketType.Inbox) {
             messages.addAll(inbox.getEmails());
@@ -96,10 +96,10 @@ public class ClientModel {
             Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(new Packet(PacketType.Delete, new Pair<>(email, account)));
+            oos.writeObject(new Packet<>(PacketType.Delete, new Pair<>(email, account)));
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            Packet packet = (Packet) ois.readObject();
+            Packet<Boolean> packet = (Packet<Boolean>) ois.readObject();
 
             socket.close();
 
@@ -107,7 +107,7 @@ public class ClientModel {
                 messages.remove(email);
             }
 
-            return (boolean) packet.getData();
+            return packet.getData();
         } catch (Exception e) {
             return false;
         }
@@ -126,7 +126,9 @@ public class ClientModel {
 
         synchronized (messages) {
             Platform.runLater(() -> messages.setAll(emails));
-            messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+            if (messages.size() > 1) {
+                messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+            }
         }
 
         if (difference > 0 && (difference - notify.getSentMail()) > 0) {
@@ -147,17 +149,17 @@ public class ClientModel {
             Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(new Packet(PacketType.Read, new Pair<>(email, account)));
+            oos.writeObject(new Packet<>(PacketType.Read, new Pair<>(email, account)));
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            Packet packet = (Packet) ois.readObject();
+            Packet<Boolean> packet = (Packet<Boolean>) ois.readObject();
 
             socket.close();
 
             int index = messages.indexOf(email);
             email.setRead();
 
-            if ((boolean) packet.getData()) {
+            if (packet.getData()) {
                 synchronized (messages) {
                     messages.set(index, email);
                 }

@@ -14,13 +14,13 @@ public class LoginModel {
         Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);
         ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-        out.writeObject(new Packet(PacketType.Login, account));
+        out.writeObject(new Packet<>(PacketType.Login, account));
 
         ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-        Packet pkt = (Packet) in.readObject();
+        Packet<Boolean> pkt = (Packet<Boolean>) in.readObject();
 
         clientSocket.close();
 
-        return (boolean) pkt.getData();
+        return pkt.getData();
     }
 }
