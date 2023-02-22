@@ -59,12 +59,12 @@ public class ServerLogger implements ServerObserver {
             }
             case Delete -> {
                 Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
-                String message = String.format("Email with id %s has been deleted", pair.getKey().getId().toString());
+                String message = String.format("%s deleted an email with id %s", pair.getValue().getAddress(), pair.getKey().getId().toString());
                 log(message, Level.INFO);
             }
             case Read -> {
                 Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
-                String message = String.format("Email with id %s has been read", pair.getKey().getId().toString());
+                String message = String.format("%s read an email with id %s", pair.getValue().getAddress(), pair.getKey().getId().toString());
                 log(message, Level.INFO);
             }
             default -> log("Unhandled packet received", Level.WARNING);

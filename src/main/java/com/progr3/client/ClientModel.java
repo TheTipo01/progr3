@@ -125,7 +125,9 @@ public class ClientModel {
         int difference = emails.size() - messages.size();
 
         synchronized (messages) {
-            Platform.runLater(() -> messages.setAll(emails));
+            if (emails.size() > 0) {
+                Platform.runLater(() -> messages.setAll(emails));
+            }
             if (messages.size() > 1) {
                 messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             }
