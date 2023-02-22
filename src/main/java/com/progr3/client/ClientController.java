@@ -40,13 +40,26 @@ public class ClientController {
 
     private ClientModel clientModel;
 
-    private NotifyController notifyController;
+    private Notify notify;
+
+    private ServerPoller listener;
 
     @FXML
     public void initialize() {
-        notifyController = new NotifyController();
+        notify = new Notify();
 
-        clientModel = new ClientModel(notifyController);
+        try {
+            clientModel = new ClientModel(notify);
+        } catch (Exception e) {
+            try {
+                PopupController.showPopup("Errore", "Impossibile caricare le email. Riprovare?", ImageType.Error, (event) -> {
+                    initialize();
+                });
+            } catch (Exception ignored) {
+            }
+            return;
+        }
+
 
         updateTitle();
         clientModel.addListenerMessages(c -> updateTitle());
@@ -67,8 +80,16 @@ public class ClientController {
         initializeTableView();
         displayContent();
 
-        ServerListener listener = new ServerListener(clientModel);
+        listener = new ServerPoller(clientModel);
         listener.start();
+    }
+
+    public void setOnCloseRequest(Stage stage) {
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            listener.interrupt();
+            System.exit(0);
+        });
     }
 
     public void updateTitle() {
@@ -94,7 +115,12 @@ public class ClientController {
                 Email email = clientModel.getMessage(tablePosition.getRow());
                 textArea.setText(email.getText());
                 receivers.setText(String.join(", ", email.getReceivers()));
-                clientModel.setEmailAsRead(email);
+
+                try {
+                    clientModel.setEmailAsRead(email);
+                } catch (Exception ignored) {
+                }
+
                 tableView.refresh();
                 updateTitle();
             }
@@ -157,16 +183,18 @@ public class ClientController {
     public void onBtnDelete() throws IOException {
         Email email = tableView.getSelectionModel().getSelectedItem();
 
-        PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
-            boolean status = clientModel.deleteEmail(email, ClientModel.account);
-            if (!status) {
-                try {
-                    PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (email != null) {
+            PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
+                boolean status = clientModel.deleteEmail(email, ClientModel.account);
+                if (!status) {
+                    try {
+                        PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void openWrite(WriteMode mode, Email email) throws IOException {
@@ -174,20 +202,30 @@ public class ClientController {
         FXMLLoader loader = new FXMLLoader(clientUrl);
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-        WriteController writeController = loader.getController();
-        writeController.setNotify(notifyController);
 
-        if (email != null) {
-            switch (mode) {
-                case Reply -> writeController.setParamsReply(email);
-                case ReplyAll -> writeController.setParamsReplyAll(email);
-                case Forward -> writeController.setParamsForward(email);
-            }
-        }
+        WriteController writeController = loader.getController();
+        writeController.setNotify(notify);
 
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setResizable(false);
+
+        switch (mode) {
+            case Reply -> {
+                writeController.setParamsReply(email);
+                stage.setTitle("Rispondi ad una email");
+            }
+            case ReplyAll -> {
+                writeController.setParamsReplyAll(email);
+                stage.setTitle("Rispondi ad una email");
+            }
+            case Forward -> {
+                writeController.setParamsForward(email);
+                stage.setTitle("Inoltra una email");
+            }
+            case Normal -> stage.setTitle("Scrivi una email");
+        }
+
         stage.show();
     }
 
@@ -196,14 +234,23 @@ public class ClientController {
     }
 
     public void onBtnReply() throws IOException {
-        openWrite(WriteMode.Reply, tableView.getSelectionModel().getSelectedItem());
+        Email email = tableView.getSelectionModel().getSelectedItem();
+        if (email != null) {
+            openWrite(WriteMode.Reply, email);
+        }
     }
 
     public void onBtnReplyAll() throws IOException {
-        openWrite(WriteMode.ReplyAll, tableView.getSelectionModel().getSelectedItem());
+        Email email = tableView.getSelectionModel().getSelectedItem();
+        if (email != null) {
+            openWrite(WriteMode.ReplyAll, email);
+        }
     }
 
     public void onBtnForward() throws IOException {
-        openWrite(WriteMode.Forward, tableView.getSelectionModel().getSelectedItem());
+        Email email = tableView.getSelectionModel().getSelectedItem();
+        if (email != null) {
+            openWrite(WriteMode.Forward, email);
+        }
     }
 }

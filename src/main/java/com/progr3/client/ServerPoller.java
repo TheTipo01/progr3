@@ -10,10 +10,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
-public class ServerListener extends Thread {
+public class ServerPoller extends Thread {
     private final ClientModel model;
 
-    public ServerListener(ClientModel model) {
+    public ServerPoller(ClientModel model) {
         this.model = model;
     }
 
@@ -23,7 +23,7 @@ public class ServerListener extends Thread {
             try {
                 Thread.sleep(LoginMain.waitTime);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                break;
             }
 
             try {

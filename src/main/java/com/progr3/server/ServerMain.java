@@ -19,16 +19,19 @@ public class ServerMain extends Application {
         stage.setTitle("Server Log");
         stage.setScene(scene);
 
-        stage.setOnCloseRequest(t -> {
-            Platform.exit();
-            System.exit(0);
-        });
-
         List<ServerObserver> observers = new ArrayList<>();
         observers.add(fxmlLoader.getController());
 
         Server server = new Server(42069, observers);
         Thread serverThread = new Thread(server);
+
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            serverThread.interrupt();
+            server.shutdown();
+            System.exit(0);
+        });
+
         serverThread.start();
 
         stage.show();

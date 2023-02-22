@@ -78,9 +78,4 @@ public class Manager {
 
         return deleted;
     }
-
-    public Account getAccount() {
-        return account;
-    }
-
 }

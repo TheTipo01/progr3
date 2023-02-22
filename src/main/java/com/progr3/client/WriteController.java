@@ -45,7 +45,7 @@ public class WriteController {
                 boolean error = (boolean) result.getData();
 
                 if (error) {
-                    PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
+                    PopupController.showPopup("Errore", "Email non esistente!", ImageType.Error, null);
                 } else {
                     ((Stage) from.getScene().getWindow()).close();
                     PopupController.showPopup("Successo", "Email inviata con successo.", ImageType.Success, null);
@@ -64,6 +64,8 @@ public class WriteController {
 
                 PopupController.showPopup("Attenzione", "Email non inviata ai seguenti indirizzi:\n" + addresses, ImageType.Warning, null);
             }
+            case ConnectionError ->
+                    PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
         }
 
     }
@@ -73,8 +75,8 @@ public class WriteController {
         ((Stage) content.getScene().getWindow()).close();
     }
 
-    public void setNotify(NotifyController notifyController) {
-        model.setNotifyController(notifyController);
+    public void setNotify(Notify notify) {
+        model.setNotifyController(notify);
     }
 
     private void setParams(Email email) {

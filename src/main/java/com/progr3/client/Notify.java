@@ -1,9 +1,9 @@
 package com.progr3.client;
 
-public class NotifyController {
+public class Notify {
     private Integer sentMail;
 
-    public NotifyController() {
+    public Notify() {
         sentMail = 0;
     }
 

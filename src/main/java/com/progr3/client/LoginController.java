@@ -2,7 +2,6 @@ package com.progr3.client;
 
 import com.progr3.client.enumerations.ImageType;
 import com.progr3.entities.Account;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -46,13 +45,12 @@ public class LoginController {
                 scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
                 Stage stage = new Stage();
 
-                stage.setOnCloseRequest(t -> {
-                    Platform.exit();
-                    System.exit(0);
-                });
+                ClientController controller = loader.getController();
+                controller.setOnCloseRequest(stage);
 
                 stage.setScene(scene);
                 stage.setResizable(false);
+                stage.setTitle("Email client");
                 stage.show();
 
                 ((Stage) email.getScene().getWindow()).close();
@@ -63,6 +61,4 @@ public class LoginController {
             PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
         }
     }
-
-
 }

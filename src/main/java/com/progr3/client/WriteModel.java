@@ -4,7 +4,6 @@ import com.progr3.entities.Email;
 import com.progr3.entities.Packet;
 import com.progr3.entities.PacketType;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -12,13 +11,13 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class WriteModel {
-    private NotifyController notifyController;
+    private Notify notify;
 
-    public void setNotifyController(NotifyController notifyController) {
-        this.notifyController = notifyController;
+    public void setNotifyController(Notify notify) {
+        this.notify = notify;
     }
 
-    public Packet sendMail(Email email) throws IOException {
+    public Packet sendMail(Email email) {
         if (email == null) {
             return new Packet(PacketType.Error, true);
         }
@@ -34,11 +33,11 @@ public class WriteModel {
 
             clientSocket.close();
 
-            notifyController.incrementSentMail();
+            notify.incrementSentMail();
 
             return pkt;
         } catch (Exception e) {
-            return new Packet(PacketType.Error, true);
+            return new Packet(PacketType.ConnectionError, true);
         }
     }
 
@@ -60,7 +59,7 @@ public class WriteModel {
      * @param email the email address to validate
      * @return true if the email address is valid, false otherwise
      */
-    public static boolean validateEmail(String email) {
+    private static boolean validateEmail(String email) {
         return Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$").matcher(email).matches();
     }
 }

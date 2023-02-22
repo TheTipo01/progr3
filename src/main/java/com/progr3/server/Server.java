@@ -69,16 +69,23 @@ public class Server implements Runnable {
     @Override
     public void run() {
         try {
-            for (ServerObserver o : observers)
-                o.onStart();
+            observers.forEach(ServerObserver::onStart);
 
             while (!Thread.interrupted()) {
                 Socket clientSocket = socket.accept();
                 pool.submit(() -> handle(clientSocket));
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            pool.shutdownNow();
+            observers.forEach(ServerObserver::onShutdown);
         }
     }
 
@@ -155,17 +162,25 @@ public class Server implements Runnable {
 
             input.close();
 
-            for (ServerObserver o : observers)
-                o.onReceive(packet);
-
+            observers.forEach(o -> o.onPacket(packet));
         } catch (Exception e) {
-            for (ServerObserver o : observers)
-                o.onError(clientSocket, e);
+            observers.forEach(o -> o.onError(clientSocket, e));
         } finally {
             try {
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public void shutdown() {
+        if (socket != null && !socket.isClosed()) {
+            try {
+                socket.close();
+                observers.forEach(ServerObserver::onShutdown);
+            } catch (IOException e) {
+                observers.forEach(o -> o.onError(null, e));
             }
         }
     }

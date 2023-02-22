@@ -8,4 +8,5 @@ public enum PacketType {
     Error,
     ErrorPartialSend,
     Read,
+    ConnectionError,
 }

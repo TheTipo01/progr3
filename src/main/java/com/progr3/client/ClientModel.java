@@ -22,45 +22,36 @@ import java.util.List;
 public class ClientModel {
     public static Account account;
     private final ObservableList<Email> messages;
-    private final NotifyController notifyController;
+    private final Notify notify;
     private final BooleanProperty serverOnline;
 
-    public ClientModel(NotifyController notifyController) {
+    public ClientModel(Notify notify) throws Exception {
         messages = FXCollections.observableArrayList(new ArrayList<>());
-        this.notifyController = notifyController;
+        this.notify = notify;
         serverOnline = new SimpleBooleanProperty(true);
 
         loadMessages();
-    }
-
-    public BooleanProperty getServerOnline() {
-        return serverOnline;
     }
 
     public void setServerOnline(boolean online) {
         serverOnline.set(online);
     }
 
-    private void loadMessages() {
-        try {
-            Socket socket = new Socket(LoginMain.host, LoginMain.port);
+    private void loadMessages() throws Exception {
+        Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(new Packet(PacketType.Inbox, new Inbox(account, null)));
+        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        oos.writeObject(new Packet(PacketType.Inbox, new Inbox(account, null)));
 
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            Packet packet = (Packet) ois.readObject();
+        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+        Packet packet = (Packet) ois.readObject();
 
-            socket.close();
+        socket.close();
 
-            Inbox inbox = (Inbox) packet.getData();
+        Inbox inbox = (Inbox) packet.getData();
 
-            if (packet.getType() == PacketType.Inbox) {
-                messages.addAll(inbox.getEmails());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (packet.getType() == PacketType.Inbox) {
+            messages.addAll(inbox.getEmails());
         }
     }
 
@@ -138,7 +129,7 @@ public class ClientModel {
             messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
         }
 
-        if (difference > 0 && (difference - notifyController.getSentMail()) > 0) {
+        if (difference > 0 && (difference - notify.getSentMail()) > 0) {
             Platform.runLater(() -> {
                 try {
                     PopupController.showPopup("Nuova mail", "Hai ricevuto una email!", ImageType.Success, null);
@@ -148,32 +139,28 @@ public class ClientModel {
             });
         }
 
-        notifyController.setSentMail(0);
+        notify.setSentMail(0);
     }
 
-    public void setEmailAsRead(Email email) {
+    public void setEmailAsRead(Email email) throws Exception {
         if (!email.isRead()) {
-            try {
-                Socket socket = new Socket(LoginMain.host, LoginMain.port);
+            Socket socket = new Socket(LoginMain.host, LoginMain.port);
 
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(new Packet(PacketType.Read, new Pair<>(email, account)));
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(new Packet(PacketType.Read, new Pair<>(email, account)));
 
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                Packet packet = (Packet) ois.readObject();
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            Packet packet = (Packet) ois.readObject();
 
-                socket.close();
+            socket.close();
 
-                int index = messages.indexOf(email);
-                email.setRead();
+            int index = messages.indexOf(email);
+            email.setRead();
 
-                if ((boolean) packet.getData()) {
-                    synchronized (messages) {
-                        messages.set(index, email);
-                    }
+            if ((boolean) packet.getData()) {
+                synchronized (messages) {
+                    messages.set(index, email);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

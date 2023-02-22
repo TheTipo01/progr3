@@ -27,11 +27,11 @@ public class PopupController {
     @FXML
     private Button yes;
 
-    public void setContent(String content) {
+    private void setContent(String content) {
         this.content.setText(content);
     }
 
-    public void setImage(ImageType image) {
+    private void setImage(ImageType image) {
         switch (image) {
             case Error ->
                     this.image.setImage(new Image(Objects.requireNonNull(LoginMain.class.getResourceAsStream("/icons/x-octagon-fill.png"))));
@@ -42,7 +42,7 @@ public class PopupController {
         }
     }
 
-    public void setYes(EventHandler<ActionEvent> event) {
+    private void setYes(EventHandler<ActionEvent> event) {
         yes.setVisible(true);
         yes.setOnAction((event1) -> {
             event.handle(event1);

@@ -1,6 +1,7 @@
-package com.progr3.server.Logger;
+package com.progr3.server.logger;
 
 public enum Level {
+    DEBUG,
     INFO,
     WARNING,
     ERROR

@@ -42,6 +42,11 @@ public class Packet implements Serializable {
                     throw new IllegalArgumentException("(Partial Send packet) Data must be a List<String>");
                 }
             }
+            case ConnectionError -> {
+                if (!(data instanceof Boolean)) {
+                    throw new IllegalArgumentException("(Connection Error packet) Data must be a Boolean");
+                }
+            }
             default -> throw new IllegalArgumentException("(Packet) Invalid packet type");
         }
 
