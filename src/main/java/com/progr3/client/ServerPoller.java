@@ -10,6 +10,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
+/**
+ * Thread used to poll the server for new messages
+ */
 public class ServerPoller extends Thread {
     private final ClientModel model;
 

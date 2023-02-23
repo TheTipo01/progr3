@@ -23,13 +23,18 @@ public class Manager {
         this.lock = new ReentrantReadWriteLock();
     }
 
+    /**
+     * Returns the emails in the inbox of the account
+     *
+     * @return List of emails
+     * @throws IOException If the inbox folder doesn't exist
+     */
     public List<Email> getInbox() throws IOException {
         ArrayList<Email> emails = new ArrayList<>();
         Lock read = lock.readLock();
         read.lock();
 
-        // Reads every file in the inbox folder for our account
-        // and adds it to the list of emails
+        // Reads every file in the inbox folder for our account and adds it to the list of emails
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("./posta/" + account.getAddress()))) {
             for (Path p : stream) {
                 // Ignore the account file
@@ -48,24 +53,36 @@ public class Manager {
         return emails;
     }
 
+    /**
+     * Saves an email to the inbox of the account
+     *
+     * @param email Email to save
+     * @return True if the email was saved successfully
+     */
     public boolean writeEmail(Email email) {
-        try {
-            Lock write = lock.writeLock();
-            if (email != null) {
-                write.lock();
+        Lock write = lock.writeLock();
+        if (email != null) {
+            write.lock();
+            try {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./posta/" + account.getAddress() + "/" + email.getId().toString()));
                 oos.writeObject(email);
                 oos.close();
+            } catch (IOException e) {
+                return false;
+            } finally {
                 write.unlock();
             }
-
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
+
+        return true;
     }
 
+    /**
+     * Deletes an email from the inbox of the account
+     *
+     * @param email Email to delete
+     * @return True if the email was deleted successfully
+     */
     public boolean deleteEmail(Email email) {
         boolean deleted = false;
 

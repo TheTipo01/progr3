@@ -46,9 +46,11 @@ public class ClientController {
 
     @FXML
     public void initialize() {
+        // Initializing class responsible for notifying the user for new mail
         notify = new Notify();
 
         try {
+            // Initializing the model
             clientModel = new ClientModel(notify);
         } catch (Exception e) {
             try {
@@ -61,8 +63,12 @@ public class ClientController {
         }
 
 
+        // Updating the title to include the number of messages in the inbox
+        // As well as adding a listener to it inside the model, so that it can dynamically change
         updateTitle();
         clientModel.addListenerMessages(c -> updateTitle());
+
+        // Listener that checks for server availability
         clientModel.addListenerOnline(((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 if (newValue) {
@@ -77,13 +83,20 @@ public class ClientController {
             });
         }));
 
+        // Initializing main client content
         initializeTableView();
         displayContent();
 
+        // Initializing and starting the listener for new mail
         listener = new ServerPoller(clientModel);
         listener.start();
     }
 
+    /**
+     * Function that sets the actions to do when closing the window
+     *
+     * @param stage
+     */
     public void setOnCloseRequest(Stage stage) {
         stage.setOnCloseRequest(t -> {
             Platform.exit();
@@ -92,6 +105,10 @@ public class ClientController {
         });
     }
 
+    /**
+     * Function used to update title bar; shows correct number of total
+     * and unread number of emails in inbox
+     */
     public void updateTitle() {
         Platform.runLater(() -> {
             int unread = clientModel.getNotReadMessages();
@@ -105,10 +122,17 @@ public class ClientController {
         });
     }
 
+    /**
+     * This method is used after initializing the TableView, and it is responsible
+     * of adding main functionality of the TableView, such as changing the
+     * content's value when clicking on a row.
+     */
     private void displayContent() {
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         ObservableList<TablePosition> selectedCells = tableView.getSelectionModel().getSelectedCells();
 
+        // Listener needed to change content and table details when
+        // selecting a table entry
         selectedCells.addListener((ListChangeListener<TablePosition>) c -> {
             if (selectedCells.size() > 0) {
                 TablePosition tablePosition = selectedCells.get(0);
@@ -116,10 +140,7 @@ public class ClientController {
                 textArea.setText(email.getText());
                 receivers.setText(String.join(", ", email.getReceivers()));
 
-                try {
-                    clientModel.setEmailAsRead(email);
-                } catch (Exception ignored) {
-                }
+                clientModel.setEmailAsRead(email);
 
                 tableView.refresh();
                 updateTitle();
@@ -127,6 +148,9 @@ public class ClientController {
         });
     }
 
+    /**
+     * This method initialize the TableView
+     */
     public void initializeTableView() {
         TableColumn<Email, String> objectCol = new TableColumn<>("Oggetto");
         objectCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getObject()));
@@ -136,6 +160,8 @@ public class ClientController {
 
         TableColumn<Email, Date> dateCol = new TableColumn<>("Data");
         dateCol.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTimestamp()));
+
+        // Setting proper data formatting
         dateCol.setCellFactory(column -> new TableCell<>() {
             private final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -150,16 +176,21 @@ public class ClientController {
             }
         });
 
+        // Adding created columns to table
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.getColumns().addAll(objectCol, senderCol, dateCol);
+
+        // Binding our messages to the TableView through the model
         clientModel.bindTableView(tableView);
 
+        // Maximizes column size
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        // Setting sort policy for date
         dateCol.setSortType(TableColumn.SortType.DESCENDING);
         tableView.getSortOrder().add(dateCol);
 
-
+        // Set unread emails bold
         tableView.setRowFactory(new Callback<>() {
             @Override
             public TableRow<Email> call(TableView<Email> email) {
@@ -180,23 +211,34 @@ public class ClientController {
         });
     }
 
-    public void onBtnDelete() throws IOException {
+    /**
+     * Action performed when the "Cancella" button is pressed.
+     */
+    public void onBtnDelete() {
+        // Getting email from the TableView
         Email email = tableView.getSelectionModel().getSelectedItem();
 
+        // If no item is selected in the TableView, email is null, so nothing happens
         if (email != null) {
+            // Confirmation popup
             PopupController.showPopup("Elimina email", "Vuoi eliminare la mail con oggetto: \"" + email.getObject() + "\"?", ImageType.Warning, (ActionEvent event2) -> {
+                // If "Si" is selected, proceed with email (file) deletion
                 boolean status = clientModel.deleteEmail(email, ClientModel.account);
                 if (!status) {
-                    try {
-                        PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    // status = deletion result; if False, server is unavailable: show error popup
+                    PopupController.showPopup("Errore", "Connessione al server assente.", ImageType.Error, null);
                 }
             });
         }
     }
 
+    /**
+     * This method create scene for write an email, according to the write mode.
+     *
+     * @param mode
+     * @param email
+     * @throws IOException
+     */
     public void openWrite(WriteMode mode, Email email) throws IOException {
         URL clientUrl = LoginMain.class.getResource("/client/write.fxml");
         FXMLLoader loader = new FXMLLoader(clientUrl);
@@ -210,6 +252,8 @@ public class ClientController {
         stage.setScene(scene);
         stage.setResizable(false);
 
+        // Mode selector: uses different methods for each mode to properly fill
+        // details inside the Write view, and sets the title accordingly
         switch (mode) {
             case Reply -> {
                 writeController.setParamsReply(email);
@@ -229,10 +273,21 @@ public class ClientController {
         stage.show();
     }
 
+    /**
+     * Action performed when the "Scrivi" button is pressed.
+     *
+     * @throws IOException
+     */
     public void onBtnWrite() throws IOException {
         openWrite(WriteMode.Normal, null);
     }
 
+    /**
+     * Action performed when the "Rispondi" button is pressed.
+     * Doesn't work if no email is selected in the TableView.
+     *
+     * @throws IOException
+     */
     public void onBtnReply() throws IOException {
         Email email = tableView.getSelectionModel().getSelectedItem();
         if (email != null) {
@@ -240,6 +295,12 @@ public class ClientController {
         }
     }
 
+    /**
+     * Action performed when the "Rispondi a tutti" button is pressed.
+     * Doesn't work if no email is selected in the TableView.
+     *
+     * @throws IOException
+     */
     public void onBtnReplyAll() throws IOException {
         Email email = tableView.getSelectionModel().getSelectedItem();
         if (email != null) {
@@ -247,6 +308,12 @@ public class ClientController {
         }
     }
 
+    /**
+     * Action performed when the "Inoltra" button is pressed.
+     * Doesn't work if no email is selected in the TableView.
+     *
+     * @throws IOException
+     */
     public void onBtnForward() throws IOException {
         Email email = tableView.getSelectionModel().getSelectedItem();
         if (email != null) {

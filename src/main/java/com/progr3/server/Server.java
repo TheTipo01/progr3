@@ -26,9 +26,9 @@ public class Server implements Runnable {
     private ServerSocket socket;
     private final ExecutorService pool;
 
-    public void sendPacket(Socket clientSocket, Packet pkt) {
+    public void sendPacket(Socket socket, Packet pkt) {
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(pkt);
             oos.close();
         } catch (IOException e) {
@@ -47,8 +47,7 @@ public class Server implements Runnable {
             e.printStackTrace();
         }
 
-        // Reads the accounts from every directory
-        // and creates a manager for each one
+        // Reads the accounts from every directory and creates a manager for each one
         try {
             DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("./posta"));
             for (Path dir : stream) {
@@ -72,8 +71,8 @@ public class Server implements Runnable {
             observers.forEach(ServerObserver::onStart);
 
             while (!Thread.interrupted()) {
-                Socket clientSocket = socket.accept();
-                pool.submit(() -> handle(clientSocket));
+                Socket socket = this.socket.accept();
+                pool.submit(() -> handle(socket));
             }
 
         } catch (Exception ignored) {
@@ -89,16 +88,16 @@ public class Server implements Runnable {
         }
     }
 
-    public void handle(Socket clientSocket) {
+    public void handle(Socket socket) {
         try {
-            ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             Packet packet = (Packet) input.readObject();
 
             switch (packet.getType()) {
                 case Login -> {
                     Account account = (Account) packet.getData();
 
-                    sendPacket(clientSocket, new Packet<>(PacketType.Error, !managers.containsKey(account.getAddress())));
+                    sendPacket(socket, new Packet<>(PacketType.Error, !managers.containsKey(account.getAddress())));
                 }
                 case Inbox -> {
                     Inbox inbox = (Inbox) packet.getData();
@@ -109,17 +108,19 @@ public class Server implements Runnable {
                         emails = manager.getInbox();
                     }
 
-                    sendPacket(clientSocket, new Packet<>(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
+                    sendPacket(socket, new Packet<>(PacketType.Inbox, new Inbox(inbox.getAccount(), emails)));
                 }
                 case Send -> {
                     Email email = (Email) packet.getData();
                     Manager manager = managers.get(email.getSender());
 
+                    // Checks if the email has at least one receiver
                     if (email.getReceivers().size() == 0) {
-                        sendPacket(clientSocket, new Packet<>(PacketType.Error, true));
+                        sendPacket(socket, new Packet<>(PacketType.Error, true));
                         return;
                     }
 
+                    // Writes the email to the receiver's inbox
                     ArrayList<String> notSent = new ArrayList<>();
                     for (String address : email.getReceivers()) {
                         if (managers.containsKey(address)) {
@@ -129,17 +130,19 @@ public class Server implements Runnable {
                         }
                     }
 
+                    // Sets the email as read for the writer
                     email.setRead();
+
                     if (notSent.size() == 0) {
                         manager.writeEmail(email);
-                        sendPacket(clientSocket, new Packet<>(PacketType.Error, false));
+                        sendPacket(socket, new Packet<>(PacketType.Error, false));
                     } else {
                         if (notSent.size() != email.getReceivers().size()) {
                             manager.writeEmail(email);
-                            sendPacket(clientSocket, new Packet<>(PacketType.ErrorPartialSend, notSent));
+                            sendPacket(socket, new Packet<>(PacketType.ErrorPartialSend, notSent));
                             observers.forEach(o -> o.onError(null, new Exception("Email with id " + email.getId().toString() + " was not sent to " + notSent)));
                         } else {
-                            sendPacket(clientSocket, new Packet<>(PacketType.Error, true));
+                            sendPacket(socket, new Packet<>(PacketType.Error, true));
                             observers.forEach(o -> o.onError(null, new Exception("No receivers found for email with id " + email.getId().toString())));
                         }
                     }
@@ -149,7 +152,7 @@ public class Server implements Runnable {
 
                     Manager manager = managers.get(pair.getValue().getAddress());
 
-                    sendPacket(clientSocket, new Packet<>(PacketType.Error, manager.deleteEmail(pair.getKey())));
+                    sendPacket(socket, new Packet<>(PacketType.Error, manager.deleteEmail(pair.getKey())));
                 }
                 case Read -> {
                     Pair<Email, Account> pair = (Pair<Email, Account>) packet.getData();
@@ -158,7 +161,7 @@ public class Server implements Runnable {
                     Email email = pair.getKey();
                     email.setRead();
 
-                    sendPacket(clientSocket, new Packet<>(PacketType.Error, !manager.writeEmail(email)));
+                    sendPacket(socket, new Packet<>(PacketType.Error, !manager.writeEmail(email)));
                 }
             }
 
@@ -166,10 +169,10 @@ public class Server implements Runnable {
 
             observers.forEach(o -> o.onPacket(packet));
         } catch (Exception e) {
-            observers.forEach(o -> o.onError(clientSocket, e));
+            observers.forEach(o -> o.onError(socket, e));
         } finally {
             try {
-                clientSocket.close();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

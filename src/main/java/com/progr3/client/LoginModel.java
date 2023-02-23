@@ -10,6 +10,13 @@ import java.net.Socket;
 
 public class LoginModel {
 
+    /**
+     * Method use to verify the existence of an account.
+     *
+     * @param account
+     * @return
+     * @throws Exception
+     */
     public boolean verifyAccount(Account account) throws Exception {
         Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);
         ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());

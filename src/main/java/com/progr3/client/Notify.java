@@ -1,5 +1,8 @@
 package com.progr3.client;
 
+/**
+ * A class used to keep track of the number of emails sent by the client, to know when to show a popup about new messages.
+ */
 public class Notify {
     private Integer sentMail;
 
