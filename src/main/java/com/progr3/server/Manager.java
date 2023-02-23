@@ -27,9 +27,8 @@ public class Manager {
      * Returns the emails in the inbox of the account
      *
      * @return List of emails
-     * @throws IOException If the inbox folder doesn't exist
      */
-    public List<Email> getInbox() throws IOException {
+    public List<Email> getInbox() {
         ArrayList<Email> emails = new ArrayList<>();
         Lock read = lock.readLock();
         read.lock();
@@ -46,6 +45,8 @@ public class Manager {
                     }
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         read.unlock();

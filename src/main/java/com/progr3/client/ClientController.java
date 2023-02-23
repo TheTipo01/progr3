@@ -291,7 +291,7 @@ public class ClientController {
     /**
      * Action performed when the "Scrivi" button is pressed.
      */
-    public void onBtnWrite() throws IOException {
+    public void onBtnWrite() {
         openWrite(WriteMode.Normal, null);
     }
 

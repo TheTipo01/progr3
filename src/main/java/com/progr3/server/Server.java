@@ -26,7 +26,7 @@ public class Server implements Runnable {
     private ServerSocket socket;
     private final ExecutorService pool;
 
-    public void sendPacket(Socket socket, Packet pkt) {
+    public void sendPacket(Socket socket, Packet<?> pkt) {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(pkt);
