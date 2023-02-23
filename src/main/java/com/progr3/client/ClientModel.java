@@ -124,14 +124,14 @@ public class ClientModel {
     public void setMessages(List<Email> emails) {
         int difference = emails.size() - messages.size();
 
-        synchronized (messages) {
-            if (emails.size() > 0) {
-                Platform.runLater(() -> messages.setAll(emails));
+        Platform.runLater(() -> {
+            synchronized (messages) {
+                messages.setAll(emails);
+                if (messages.size() > 1) {
+                    messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+                }
             }
-            if (messages.size() > 1) {
-                messages.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
-            }
-        }
+        });
 
         if (difference > 0 && (difference - notify.getSentMail()) > 0) {
             Platform.runLater(() -> {
