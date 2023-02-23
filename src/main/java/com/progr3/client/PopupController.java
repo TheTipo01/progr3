@@ -90,6 +90,14 @@ public class PopupController {
             stage.setTitle(title);
             stage.setResizable(false);
 
+            // Move the popup over the ClientMain window
+            try {
+                stage.setX(ClientController.getX() + 250);
+                stage.setY(ClientController.getY() + 100);
+            } catch (Exception ignored) {
+                // If the popup is called from the login window, the ClientController class is not initialized
+            }
+
             PopupController controller = loader.getController();
 
             controller.setContent(content);

@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ClientController {
+    private static Stage stage;
+
     @FXML
     private TextField receivers;
 
@@ -103,6 +105,8 @@ public class ClientController {
             listener.interrupt();
             System.exit(0);
         });
+
+        ClientController.stage = stage;
     }
 
     /**
@@ -233,50 +237,56 @@ public class ClientController {
     }
 
     /**
-     * This method create scene for write an email, according to the write mode.
+     * Creates scene for writing an email, according to the write mode.
      *
-     * @param mode
-     * @param email
-     * @throws IOException
+     * @param mode  The write mode
+     * @param email The email to reply to
      */
-    public void openWrite(WriteMode mode, Email email) throws IOException {
-        URL clientUrl = LoginMain.class.getResource("/client/write.fxml");
-        FXMLLoader loader = new FXMLLoader(clientUrl);
-        Scene scene = new Scene(loader.load());
-        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+    public void openWrite(WriteMode mode, Email email) {
+        try {
+            URL clientUrl = LoginMain.class.getResource("/client/write.fxml");
+            FXMLLoader loader = new FXMLLoader(clientUrl);
+            Scene scene = new Scene(loader.load());
 
-        WriteController writeController = loader.getController();
-        writeController.setNotify(notify);
+            scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setResizable(false);
+            WriteController writeController = loader.getController();
+            writeController.setNotify(notify);
 
-        // Mode selector: uses different methods for each mode to properly fill
-        // details inside the Write view, and sets the title accordingly
-        switch (mode) {
-            case Reply -> {
-                writeController.setParamsReply(email);
-                stage.setTitle("Rispondi ad una email");
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setResizable(false);
+
+            // Move the popup over the ClientMain window
+            stage.setX(getX() + 100);
+            stage.setY(getY());
+
+            // Mode selector: uses different methods for each mode to properly fill
+            // details inside the Write view, and sets the title accordingly
+            switch (mode) {
+                case Reply -> {
+                    writeController.setParamsReply(email);
+                    stage.setTitle("Rispondi ad una email");
+                }
+                case ReplyAll -> {
+                    writeController.setParamsReplyAll(email);
+                    stage.setTitle("Rispondi ad una email");
+                }
+                case Forward -> {
+                    writeController.setParamsForward(email);
+                    stage.setTitle("Inoltra una email");
+                }
+                case Normal -> stage.setTitle("Scrivi una email");
             }
-            case ReplyAll -> {
-                writeController.setParamsReplyAll(email);
-                stage.setTitle("Rispondi ad una email");
-            }
-            case Forward -> {
-                writeController.setParamsForward(email);
-                stage.setTitle("Inoltra una email");
-            }
-            case Normal -> stage.setTitle("Scrivi una email");
+
+            stage.show();
+        } catch (IOException ignored) {
+            // This exception is never thrown, since the FXML file is always found
         }
-
-        stage.show();
     }
 
     /**
      * Action performed when the "Scrivi" button is pressed.
-     *
-     * @throws IOException
      */
     public void onBtnWrite() throws IOException {
         openWrite(WriteMode.Normal, null);
@@ -285,10 +295,8 @@ public class ClientController {
     /**
      * Action performed when the "Rispondi" button is pressed.
      * Doesn't work if no email is selected in the TableView.
-     *
-     * @throws IOException
      */
-    public void onBtnReply() throws IOException {
+    public void onBtnReply() {
         Email email = tableView.getSelectionModel().getSelectedItem();
         if (email != null) {
             openWrite(WriteMode.Reply, email);
@@ -298,10 +306,8 @@ public class ClientController {
     /**
      * Action performed when the "Rispondi a tutti" button is pressed.
      * Doesn't work if no email is selected in the TableView.
-     *
-     * @throws IOException
      */
-    public void onBtnReplyAll() throws IOException {
+    public void onBtnReplyAll() {
         Email email = tableView.getSelectionModel().getSelectedItem();
         if (email != null) {
             openWrite(WriteMode.ReplyAll, email);
@@ -311,13 +317,29 @@ public class ClientController {
     /**
      * Action performed when the "Inoltra" button is pressed.
      * Doesn't work if no email is selected in the TableView.
-     *
-     * @throws IOException
      */
-    public void onBtnForward() throws IOException {
+    public void onBtnForward() {
         Email email = tableView.getSelectionModel().getSelectedItem();
         if (email != null) {
             openWrite(WriteMode.Forward, email);
         }
+    }
+
+    /**
+     * Obtains the X coordinate of the Client window.
+     *
+     * @return X coordinate
+     */
+    public static double getX() {
+        return stage.getX();
+    }
+
+    /**
+     * Obtains the Y coordinate of the Client window.
+     *
+     * @return Y coordinate
+     */
+    public static double getY() {
+        return stage.getY();
     }
 }

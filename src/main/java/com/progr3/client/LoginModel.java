@@ -13,9 +13,9 @@ public class LoginModel {
     /**
      * Method use to verify the existence of an account.
      *
-     * @param account
-     * @return
-     * @throws Exception
+     * @param account The account to verify
+     * @return True if the account exists, false otherwise
+     * @throws Exception If an error connecting to the server occurs
      */
     public boolean verifyAccount(Account account) throws Exception {
         Socket clientSocket = new Socket(LoginMain.host, LoginMain.port);

@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +27,14 @@ public class WriteController {
     @FXML
     private TextArea content;
 
+    private SimpleDateFormat format;
+
     @FXML
     public void initialize() {
         model = new WriteModel();
         from.setText(ClientModel.account.getAddress());
         from.setDisable(true);
+        format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     }
 
     /**
@@ -107,7 +111,7 @@ public class WriteController {
         to.setDisable(true);
         object.setText("Re: " + email.getObject());
         object.setDisable(true);
-        content.setText("\n\n\n\n\n[" + email.getTimestamp() + "] " + email.getSender() + " ha inviato:\n" + email.getText());
+        content.setText("\n\n\n\n\n[" + format.format(email.getTimestamp()) + "] " + email.getSender() + " ha inviato:\n" + email.getText());
     }
 
     /**
@@ -147,7 +151,7 @@ public class WriteController {
         object.setText("Fwd: " + email.getObject());
         object.setDisable(true);
         content.setText("\n\n---- Messaggio Inoltrato ----\nOggetto: " + email.getObject() +
-                "\nData: " + email.getTimestamp() +
+                "\nData: " + format.format(email.getTimestamp()) +
                 "\nMittente: " + email.getSender() +
                 "\n\n\n" + email.getText());
     }

@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.util.Pair;
 
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ServerLogger implements ServerObserver {
@@ -17,14 +18,16 @@ public class ServerLogger implements ServerObserver {
     private TextArea textArea;
 
     private final Level level;
+    private final SimpleDateFormat format;
 
     public ServerLogger() {
         level = Level.INFO;
+        format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     }
 
     private void log(String message, Level level) {
         if (level.compareTo(this.level) >= 0) {
-            String logMessage = String.format("[%s] %s: %s\n", new Date(), level, message);
+            String logMessage = String.format("[%s] %s: %s\n", format.format(new Date()), level, message);
             textArea.appendText(logMessage);
         }
     }
