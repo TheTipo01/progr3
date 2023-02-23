@@ -128,7 +128,7 @@ public class ClientController {
 
     /**
      * This method is used after initializing the TableView, and it is responsible
-     * of adding main functionality of the TableView, such as changing the
+     * for adding main functionality of the TableView, such as changing the
      * content's value when clicking on a row.
      */
     private void displayContent() {
