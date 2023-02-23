@@ -49,7 +49,7 @@ public class ServerLogger implements ServerObserver {
             }
             case Send -> {
                 Email email = (Email) packet.getData();
-                String message = String.format("%s sent an email to %s", email.getSender(), email.getReceivers().toString());
+                String message = String.format("%s sent an email with id %s to %s", email.getSender(), email.getId().toString(), email.getReceivers().toString());
                 log(message, Level.INFO);
             }
             case Inbox -> {

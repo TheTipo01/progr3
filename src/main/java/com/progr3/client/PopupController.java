@@ -27,6 +27,9 @@ public class PopupController {
     @FXML
     private Button yes;
 
+    @FXML
+    private Button close;
+
     private void setContent(String content) {
         this.content.setText(content);
     }
@@ -51,6 +54,10 @@ public class PopupController {
         });
     }
 
+    private void centerCloseButton() {
+        close.setLayoutX(close.getLayoutX() - 65);
+    }
+
     public void onCloseButton() {
         ((Stage) content.getScene().getWindow()).close();
     }
@@ -71,6 +78,8 @@ public class PopupController {
         controller.setImage(image);
         if (event != null) {
             controller.setYes(event);
+        } else {
+            controller.centerCloseButton();
         }
 
         stage.show();

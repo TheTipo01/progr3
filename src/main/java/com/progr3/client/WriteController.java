@@ -39,6 +39,11 @@ public class WriteController {
         to.setDisable(false);
         object.setDisable(false);
         Email email = model.formatEmail(to.getText(), object.getText(), content.getText());
+        if (email == null) {
+            PopupController.showPopup("Errore", "Una delle email non è valida!", ImageType.Error, null);
+            return;
+        }
+
         Packet result = model.sendMail(email);
         switch (result.getType()) {
             case Error -> {

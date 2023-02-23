@@ -9,7 +9,7 @@
    <children>
       <Label fx:id="content" layoutX="83.0" layoutY="72.0" text="Label" wrapText="true" />
       <ImageView fx:id="image" fitHeight="50.0" fitWidth="50.0" layoutX="26.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="191.0" layoutY="135.0" mnemonicParsing="false" onAction="#onCloseButton" text="Chiudi">
+      <Button fx:id="close" layoutX="191.0" layoutY="135.0" mnemonicParsing="false" onAction="#onCloseButton" text="Chiudi">
          <styleClass>
             <String fx:value="btn" />
             <String fx:value="btn-danger" />

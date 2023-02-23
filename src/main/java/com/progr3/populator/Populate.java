@@ -32,7 +32,7 @@ public class Populate {
         List<String> receivers = new ArrayList<>();
         receivers.add(account.getAddress());
 
-        Email email = new Email("qqSD7xKfSmjk0wK67ep@yhtwtombr.marchildren.in.net", receivers, "HAI IL LIDL 500€", "Sei stato selezionato questa settimana come vincitore!");
+        Email email = new Email(address, receivers, "Mail di prova", "Questa è una mail di prova");
         oos = new ObjectOutputStream(new FileOutputStream("./posta/" + account.getAddress() + "/" + email.getId().toString()));
         oos.writeObject(email);
     }

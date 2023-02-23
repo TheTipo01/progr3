@@ -137,8 +137,10 @@ public class Server implements Runnable {
                         if (notSent.size() != email.getReceivers().size()) {
                             manager.writeEmail(email);
                             sendPacket(clientSocket, new Packet<>(PacketType.ErrorPartialSend, notSent));
+                            observers.forEach(o -> o.onError(null, new Exception("Email with id " + email.getId().toString() + " was not sent to " + notSent)));
                         } else {
                             sendPacket(clientSocket, new Packet<>(PacketType.Error, true));
+                            observers.forEach(o -> o.onError(null, new Exception("No receivers found for email with id " + email.getId().toString())));
                         }
                     }
                 }
