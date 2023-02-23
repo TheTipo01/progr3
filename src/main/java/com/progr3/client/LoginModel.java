@@ -24,10 +24,10 @@ public class LoginModel {
         out.writeObject(new Packet<>(PacketType.Login, account));
 
         ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-        Packet<Boolean> pkt = (Packet<Boolean>) in.readObject();
+        Packet<?> pkt = (Packet<?>) in.readObject();
 
         clientSocket.close();
 
-        return pkt.getData();
+        return (boolean) pkt.getData();
     }
 }

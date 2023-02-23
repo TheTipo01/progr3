@@ -13,7 +13,7 @@ public interface ServerObserver {
 
     void onClose();
 
-    void onPacket(Packet pkt);
+    void onPacket(Packet<?> pkt);
 
     void onError(Socket clientSocket, Throwable exception);
 }

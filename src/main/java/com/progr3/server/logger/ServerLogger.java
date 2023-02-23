@@ -45,7 +45,7 @@ public class ServerLogger implements ServerObserver {
     }
 
     @Override
-    public void onPacket(Packet packet) {
+    public void onPacket(Packet<?> packet) {
         switch (packet.getType()) {
             case Login -> {
                 Account account = (Account) packet.getData();

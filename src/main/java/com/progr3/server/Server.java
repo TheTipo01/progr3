@@ -97,7 +97,7 @@ public class Server implements Runnable {
     public void handle(Socket socket) {
         try {
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-            Packet packet = (Packet) input.readObject();
+            Packet<?> packet = (Packet<?>) input.readObject();
 
             switch (packet.getType()) {
                 case Login -> {

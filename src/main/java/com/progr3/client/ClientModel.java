@@ -55,11 +55,11 @@ public class ClientModel {
 
         // And reads the response
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-        Packet<Inbox> packet = (Packet<Inbox>) ois.readObject();
+        Packet<?> packet = (Packet<?>) ois.readObject();
 
         socket.close();
 
-        Inbox inbox = packet.getData();
+        Inbox inbox = (Inbox) packet.getData();
 
         if (packet.getType() == PacketType.Inbox) {
             messages.addAll(inbox.getEmails());
@@ -140,7 +140,7 @@ public class ClientModel {
             oos.writeObject(new Packet<>(PacketType.Delete, new Pair<>(email, account)));
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            Packet<Boolean> packet = (Packet<Boolean>) ois.readObject();
+            Packet<?> packet = (Packet<?>) ois.readObject();
 
             socket.close();
 
@@ -148,7 +148,7 @@ public class ClientModel {
                 messages.remove(email);
             }
 
-            return packet.getData();
+            return (boolean) packet.getData();
         } catch (Exception e) {
             return false;
         }
@@ -224,7 +224,7 @@ public class ClientModel {
 
                 // Read the response
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                Packet<Boolean> packet = (Packet<Boolean>) ois.readObject();
+                Packet<?> packet = (Packet<?>) ois.readObject();
 
                 socket.close();
 
@@ -232,7 +232,7 @@ public class ClientModel {
                 int index = messages.indexOf(email);
                 email.setRead();
 
-                if (packet.getData()) {
+                if ((boolean) packet.getData()) {
                     synchronized (messages) {
                         messages.set(index, email);
                     }
