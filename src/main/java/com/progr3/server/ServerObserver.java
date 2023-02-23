@@ -9,6 +9,10 @@ public interface ServerObserver {
 
     void onShutdown();
 
+    void onAccept();
+
+    void onClose();
+
     void onPacket(Packet pkt);
 
     void onError(Socket clientSocket, Throwable exception);

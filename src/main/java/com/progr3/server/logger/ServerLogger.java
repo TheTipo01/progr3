@@ -5,6 +5,7 @@ import com.progr3.entities.Email;
 import com.progr3.entities.Inbox;
 import com.progr3.entities.Packet;
 import com.progr3.server.ServerObserver;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.util.Pair;
@@ -21,6 +22,7 @@ public class ServerLogger implements ServerObserver {
     private final SimpleDateFormat format;
 
     public ServerLogger() {
+        // To see other logs, like when a connection is opened or closed, change it to DEBUG
         level = Level.INFO;
         format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     }
@@ -28,7 +30,7 @@ public class ServerLogger implements ServerObserver {
     private void log(String message, Level level) {
         if (level.compareTo(this.level) >= 0) {
             String logMessage = String.format("[%s] %s: %s\n", format.format(new Date()), level, message);
-            textArea.appendText(logMessage);
+            Platform.runLater(() -> textArea.appendText(logMessage));
         }
     }
 
@@ -77,5 +79,15 @@ public class ServerLogger implements ServerObserver {
     @Override
     public void onError(Socket clientSocket, Throwable exception) {
         log(exception.getMessage(), Level.ERROR);
+    }
+
+    @Override
+    public void onAccept() {
+        log("New connection accepted", Level.DEBUG);
+    }
+
+    @Override
+    public void onClose() {
+        log("Connection closed", Level.DEBUG);
     }
 }

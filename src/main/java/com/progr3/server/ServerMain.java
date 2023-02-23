@@ -22,7 +22,7 @@ public class ServerMain extends Application {
         List<ServerObserver> observers = new ArrayList<>();
         observers.add(fxmlLoader.getController());
 
-        Server server = new Server(42069, observers);
+        Server server = new Server(42069, observers, 6);
         Thread serverThread = new Thread(server);
 
         stage.setOnCloseRequest(t -> {

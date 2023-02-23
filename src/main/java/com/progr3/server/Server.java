@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 public class Server implements Runnable {
     private final Map<String, Manager> managers;
     private final List<ServerObserver> observers;
     private ServerSocket socket;
     private final ExecutorService pool;
+    private final Semaphore semaphore;
 
     public void sendPacket(Socket socket, Packet<?> pkt) {
         try {
@@ -36,7 +38,7 @@ public class Server implements Runnable {
         }
     }
 
-    public Server(int port, List<ServerObserver> observers) {
+    public Server(int port, List<ServerObserver> observers, int maxThreads) {
         this.managers = new HashMap<>();
         this.observers = observers;
 
@@ -62,7 +64,9 @@ public class Server implements Runnable {
             e.printStackTrace();
         }
 
-        pool = Executors.newFixedThreadPool(6);
+        pool = Executors.newFixedThreadPool(maxThreads);
+        // Semaphore to not exceed the maximum number of threads available in the pool
+        semaphore = new Semaphore(maxThreads);
     }
 
     @Override
@@ -71,7 +75,9 @@ public class Server implements Runnable {
             observers.forEach(ServerObserver::onStart);
 
             while (!Thread.interrupted()) {
+                semaphore.acquire();
                 Socket socket = this.socket.accept();
+                observers.forEach(ServerObserver::onAccept);
                 pool.submit(() -> handle(socket));
             }
 
@@ -173,6 +179,8 @@ public class Server implements Runnable {
         } finally {
             try {
                 socket.close();
+                observers.forEach(ServerObserver::onClose);
+                semaphore.release();
             } catch (IOException e) {
                 e.printStackTrace();
             }
