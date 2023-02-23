@@ -213,6 +213,9 @@ public class ClientController {
                 };
             }
         });
+
+        // Change placeholder label
+        tableView.setPlaceholder(new Label("Nessuna email presente"));
     }
 
     /**
