@@ -24,7 +24,7 @@ public class ServerLogger implements ServerObserver {
     public ServerLogger() {
         // To see other logs, like when a connection is opened or closed, change it to DEBUG
         level = Level.INFO;
-        format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
     }
 
     private void log(String message, Level level) {
