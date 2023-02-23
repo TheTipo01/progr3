@@ -35,7 +35,7 @@ public class ClientModel {
     /**
      * Method used to change server status
      *
-     * @param online
+     * @param online boolean value that defines the connection status
      */
     public void setServerOnline(boolean online) {
         serverOnline.set(online);
@@ -44,7 +44,7 @@ public class ClientModel {
     /**
      * This method is called for loading messages.
      *
-     * @throws Exception
+     * @throws Exception If an error connecting to the server occurs
      */
     private void loadMessages() throws Exception {
         Socket socket = new Socket(LoginMain.host, LoginMain.port);
@@ -174,7 +174,7 @@ public class ClientModel {
     }
 
     /**
-     * Method responsible of updating the messages list when getting a new
+     * Method responsible for updating the messages list when getting a new
      * email.
      *
      * @param emails the list of emails given to the Model by the ServerPoller

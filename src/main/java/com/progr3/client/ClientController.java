@@ -97,7 +97,7 @@ public class ClientController {
     /**
      * Function that sets the actions to do when closing the window
      *
-     * @param stage
+     * @param stage Stage to set the actions on
      */
     public void setOnCloseRequest(Stage stage) {
         stage.setOnCloseRequest(t -> {
