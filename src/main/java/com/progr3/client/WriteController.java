@@ -45,9 +45,15 @@ public class WriteController {
         to.setDisable(false);
         object.setDisable(false);
 
+        String recipient = to.getText();
+        if (recipient.isEmpty()) {
+            PopupController.showPopup("Errore", "Inserisci almeno un destinatario!", ImageType.Error, null);
+            return;
+        }
+
         // Creates the email from the form data and checks
         // its validity through the model
-        Email email = model.formatEmail(to.getText(), object.getText(), content.getText());
+        Email email = model.formatEmail(recipient, object.getText(), content.getText());
         if (email == null) {
             // email is null when it's invalid: if so, show error popup
             PopupController.showPopup("Errore", "Una delle email non è valida!", ImageType.Error, null);
